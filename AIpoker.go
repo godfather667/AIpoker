@@ -13,20 +13,11 @@ import (
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
-var img *ebiten.Image
 var table *ebiten.Image
 var card *ebiten.Image
-
+var card2 *ebiten.Image
+var cardb *ebiten.Image
 var err error
-
-/* func init() {
-	var err error
-	table, _, err = ebitenutil.NewImageFromFile("images/table.png", ebiten.FilterDefault)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-*/
 
 func update(screen *ebiten.Image) error {
 	if ebiten.IsDrawingSkipped() {
@@ -51,11 +42,64 @@ func update(screen *ebiten.Image) error {
 	// Add the Translate effect to the option struct.
 	opts.GeoM.Translate(0, 37)
 
-	// Draw the square image to the screen with an empty option
+	// Draw the table image to the screen with an empty option
 	screen.DrawImage(table, opts)
 
-	// Draw Initial Image
-	//	screen.DrawImage(img, nil)
+	// Inserting Cards Pairs and Back Pairs showing sample placement
+	// This code is only for testing
+	// The display code will be totally different in future versions.
+	//
+	//  Insert Card Image
+	if card == nil {
+		// Create an Table image
+		//		table, _ = ebiten.NewImage(950, 475, ebiten.FilterNearest)
+		card, _, err = ebitenutil.NewImageFromFile("images/king_of_clubs_s.png", ebiten.FilterDefault)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	opts = &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(100, 37)
+	// Draw the card image to the screen with an empty option
+	screen.DrawImage(card, opts)
+
+	//  Insert Card2 Image
+	if card2 == nil {
+		// Create an Table image
+		//		table, _ = ebiten.NewImage(950, 475, ebiten.FilterNearest)
+		card2, _, err = ebitenutil.NewImageFromFile("images/king_of_hearts_s.png", ebiten.FilterDefault)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	opts = &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(165, 37)
+	// Draw the square image to the screen with an empty option
+	screen.DrawImage(card2, opts)
+
+	//  Insert Cardb Image
+	if cardb == nil {
+		// Create an Table image
+		//		table, _ = ebiten.NewImage(950, 475, ebiten.FilterNearest)
+		cardb, _, err = ebitenutil.NewImageFromFile("images/playing-cards-back_s.png", ebiten.FilterDefault)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	opts = &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(10, 220)
+	// Draw the square image to the screen with an empty option
+	screen.DrawImage(cardb, opts)
+
+	// Show second card back
+	opts = &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(74, 220)
+	// Draw the square image to the screen with an empty option
+	screen.DrawImage(cardb, opts)
 	return nil
 }
 
