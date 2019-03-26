@@ -43,7 +43,7 @@ func instruct() {
 
 func main() {
 	instruct() // Display current notes on project progress
-	if err := ebiten.Run(update, 1024, 512, 1, "AI POKER - You against 9 AI Players!"); err != nil {
+	if err := ebiten.Run(update, 1024, 512, 1, "AI POKER - You against eight AI Players!"); err != nil {
 		log.Fatal(err)
 	}
 }
