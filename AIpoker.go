@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	_ "image/png"
 	"log"
 
@@ -13,20 +14,48 @@ import (
 )
 
 var img *ebiten.Image
+var table *ebiten.Image
+var card *ebiten.Image
 
-func init() {
+var err error
+
+/* func init() {
 	var err error
-	img, _, err = ebitenutil.NewImageFromFile("images/table.png", ebiten.FilterDefault)
+	table, _, err = ebitenutil.NewImageFromFile("images/table.png", ebiten.FilterDefault)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
+*/
 
 func update(screen *ebiten.Image) error {
 	if ebiten.IsDrawingSkipped() {
 		return nil
 	}
-	screen.DrawImage(img, nil)
+
+	// Fill the Screen with the white color
+	screen.Fill(color.White)
+
+	//  Insert Table Image
+	if table == nil {
+		// Create an Table image
+		//		table, _ = ebiten.NewImage(950, 475, ebiten.FilterNearest)
+		table, _, err = ebitenutil.NewImageFromFile("images/table.png", ebiten.FilterDefault)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	opts := &ebiten.DrawImageOptions{}
+
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(0, 37)
+
+	// Draw the square image to the screen with an empty option
+	screen.DrawImage(table, opts)
+
+	// Draw Initial Image
+	//	screen.DrawImage(img, nil)
 	return nil
 }
 
@@ -43,7 +72,7 @@ func instruct() {
 
 func main() {
 	instruct() // Display current notes on project progress
-	if err := ebiten.Run(update, 1024, 512, 1, "AI POKER - You against eight AI Players!"); err != nil {
+	if err := ebiten.Run(update, 1024, 768, 1, "AI POKER - You against eight AI Players!"); err != nil {
 		log.Fatal(err)
 	}
 }
