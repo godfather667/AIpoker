@@ -5,9 +5,9 @@ The goal is to allow a human player to test their skills against eight AI player
 
 The user will be able to select a variety of AI players of different skills levels.
 
-It also serves as a test bed for the **github.com/hajimehoshi/ebiten** Dislay Package.
+It also serves as a test bed for the **github.com/hajimehoshi/ebiten** Display Package.
 
 * Currently it only displays a empty table.
 * The 'images' directory contains all the cards and other necessary images.
 * There is a BUG in that *the cursor must be in the initial display box* for the complete image to be displayed. 
-* Since the BUG also in the example games I have compiled. The fix is in by TODO List.
+* This BUG is also in the example games I have compiled. The fix is on my TODO List.
