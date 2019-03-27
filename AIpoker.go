@@ -17,7 +17,9 @@ var table *ebiten.Image
 var card *ebiten.Image
 var card2 *ebiten.Image
 var cardb *ebiten.Image
+var cardf *ebiten.Image
 var err error
+var idx int
 
 func update(screen *ebiten.Image) error {
 	if ebiten.IsDrawingSkipped() {
@@ -48,12 +50,12 @@ func update(screen *ebiten.Image) error {
 	// Inserting Cards Pairs and Back Pairs showing sample placement
 	// This code is only for testing
 	// The display code will be totally different in future versions.
-	//
+	//ls
 	//  Insert Card Image
 	if card == nil {
 		// Create an Table image
 		//		table, _ = ebiten.NewImage(950, 475, ebiten.FilterNearest)
-		card, _, err = ebitenutil.NewImageFromFile("images/king_of_clubs_s.png", ebiten.FilterDefault)
+		card, _, err = ebitenutil.NewImageFromFile("images/king_of_clubs.png", ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -68,7 +70,7 @@ func update(screen *ebiten.Image) error {
 	if card2 == nil {
 		// Create an Table image
 		//		table, _ = ebiten.NewImage(950, 475, ebiten.FilterNearest)
-		card2, _, err = ebitenutil.NewImageFromFile("images/king_of_hearts_s.png", ebiten.FilterDefault)
+		card2, _, err = ebitenutil.NewImageFromFile("images/king_of_hearts.png", ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -81,9 +83,7 @@ func update(screen *ebiten.Image) error {
 
 	//  Insert Cardb Image
 	if cardb == nil {
-		// Create an Table image
-		//		table, _ = ebiten.NewImage(950, 475, ebiten.FilterNearest)
-		cardb, _, err = ebitenutil.NewImageFromFile("images/playing-cards-back_s.png", ebiten.FilterDefault)
+		cardb, _, err = ebitenutil.NewImageFromFile("images/playing-cards-back.png", ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -100,6 +100,49 @@ func update(screen *ebiten.Image) error {
 	opts.GeoM.Translate(74, 220)
 	// Draw the square image to the screen with an empty option
 	screen.DrawImage(cardb, opts)
+
+	// Insert Flop Cards
+
+	for i := 0; i < 5; i++ {
+		switch i {
+		case 0:
+			cardf, _, err = ebitenutil.NewImageFromFile("images/ace_of_clubs.png", ebiten.FilterDefault)
+			if err != nil {
+				log.Fatal(err)
+			}
+			idx = 250
+		case 1:
+			cardf, _, err = ebitenutil.NewImageFromFile("images/ace_of_hearts.png", ebiten.FilterDefault)
+			if err != nil {
+				log.Fatal(err)
+			}
+			idx = 324
+		case 2:
+			cardf, _, err = ebitenutil.NewImageFromFile("images/ace_of_spades.png", ebiten.FilterDefault)
+			if err != nil {
+				log.Fatal(err)
+			}
+			idx = 398
+		case 3:
+			cardf, _, err = ebitenutil.NewImageFromFile("images/jack_of_diamonds.png", ebiten.FilterDefault)
+			if err != nil {
+				log.Fatal(err)
+			}
+			idx = 472
+		case 4:
+			cardf, _, err = ebitenutil.NewImageFromFile("images/jack_of_clubs.png", ebiten.FilterDefault)
+			if err != nil {
+				log.Fatal(err)
+			}
+			idx = 546
+		}
+		opts = &ebiten.DrawImageOptions{}
+		// Add the Translate effect to the option struct.
+		opts.GeoM.Translate(float64(idx)+20, 230)
+		// Draw the square image to the screen with an empty option
+		screen.DrawImage(cardf, opts)
+	}
+
 	return nil
 }
 
