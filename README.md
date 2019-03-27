@@ -7,7 +7,7 @@ The user will be able to select a variety of AI players of different skills leve
 
 It also serves as a test bed for the **github.com/hajimehoshi/ebiten** Display Package.
 
-* Currently it only displays a table with users cards both showing and hidden
+* Currently it displays a table with two players one where users cards both showing and one with both cards hidden.
 * A sample **flop** is also displayed.
 * The 'images' directory contains all the cards and other necessary images.
 * There is a BUG in that *the cursor must be in the initial display box* for the complete image to be displayed. 
