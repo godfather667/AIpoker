@@ -253,10 +253,15 @@ func instruct() {
 func initCards() {
 
 	tablePos := [][]int{
-		{60, 60, 100, 60},
-		{344, 20, 408, 20},
-		{450, 20, 514, 20},
-		{610, 20, 174, 20},
+		{0, 250, 64, 250},    // left-middle
+		{79, 80, 134, 80},    // left-Top
+		{314, 20, 378, 20},   // top-left
+		{560, 20, 624, 20},   // top-right
+		{800, 80, 864, 80},   // right-top
+		{850, 250, 914, 250}, // right-middle
+		{70, 440, 134, 440},  // left-bottom
+		{800, 440, 864, 440}, // right-bottom
+		{420, 450, 484, 440}, // bottom-middle
 	}
 
 	flopPos := [][]int{
