@@ -8,6 +8,8 @@ import (
 	"image/color"
 	_ "image/png"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
@@ -20,6 +22,89 @@ var cardb *ebiten.Image
 var cardf *ebiten.Image
 var err error
 var idx int
+
+var tablePos = [][]int{
+	{420, 450, 484, 440}, // bottom-middle(live Player)
+	{0, 250, 64, 250},    // left-middle
+	{79, 80, 134, 80},    // left-Top
+	{314, 20, 378, 20},   // top-left
+	{560, 20, 624, 20},   // top-right
+	{800, 80, 864, 80},   // right-top
+	{850, 250, 914, 250}, // right-middle
+	{70, 440, 134, 440},  // left-bottom
+	{800, 440, 864, 440}, // right-bottom
+	{270, 250, -1, -1},   // Flop
+	{344, 250, -1, -1},
+	{418, 250, -1. - 1},
+	{492, 250, -1, -1}, // Turn
+	{566, 250, -1, -1}, // River
+}
+var deck = map[int]string{
+	1:  "10_of_clubs.png",
+	2:  "10_of_diamonds.png",
+	3:  "10_of_hearts.png",
+	4:  "10_of_spades.png",
+	5:  "2_of_clubs.png",
+	6:  "2_of_diamonds.png",
+	7:  "2_of_hearts.png",
+	8:  "2_of_spades.png",
+	9:  "3_of_clubs.png",
+	10: "3_of_diamonds.png",
+	11: "3_of_hearts.png",
+	12: "3_of_spades.png",
+	13: "4_of_clubs.png",
+	14: "4_of_diamonds.png",
+	15: "4_of_hearts.png",
+	16: "4_of_spades.png",
+	17: "5_of_clubs.png",
+	18: "5_of_diamonds.png",
+	19: "5_of_hearts.png",
+	20: "5_of_spades.png",
+	21: "6_of_clubs.png",
+	22: "6_of_diamonds.png",
+	23: "6_of_hearts.png",
+	24: "6_of_spades.png",
+	25: "7_of_clubs.png",
+	26: "7_of_diamonds.png",
+	27: "7_of_hearts.png",
+	28: "7_of_spades.png",
+	29: "8_of_clubs.png",
+	30: "8_of_diamonds.png",
+	31: "8_of_hearts.png",
+	32: "8_of_spades.png",
+	33: "9_of_clubs.png",
+	34: "9_of_diamonds.png",
+	35: "9_of_hearts.png",
+	36: "9_of_spades.png",
+	37: "ace_of_clubs.png",
+	38: "ace_of_diamonds.png",
+	39: "ace_of_hearts.png",
+	40: "ace_of_spades.png",
+	41: "jack_of_clubs.png",
+	42: "jack_of_diamonds.png",
+	43: "jack_of_hearts.png",
+	44: "jack_of_spades.png",
+	45: "king_of_clubs.png",
+	46: "king_of_diamonds.png",
+	47: "king_of_hearts.png",
+	48: "king_of_spades.png",
+	49: "queen_of_clubs.png",
+	50: "queen_of_diamonds.png",
+	51: "queen_of_hearts.png",
+	52: "queen_of_spades.png",
+}
+
+func shuffle() {
+	s1 := time.Now().UnixNano()
+	rand.Seed(s1)
+	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
+
+	rand.Shuffle(52, func(i, j int) {
+		deck[i], deck[j] = deck[j], deck[i]
+	})
+
+	fmt.Println(deck)
+}
 
 func update(screen *ebiten.Image) error {
 
@@ -250,33 +335,6 @@ func instruct() {
 	fmt.Println("\nThis 'Feature' also shows up in their example games. May take Big Think!")
 }
 
-func initCards() {
-
-	tablePos := [][]int{
-		{0, 250, 64, 250},    // left-middle
-		{79, 80, 134, 80},    // left-Top
-		{314, 20, 378, 20},   // top-left
-		{560, 20, 624, 20},   // top-right
-		{800, 80, 864, 80},   // right-top
-		{850, 250, 914, 250}, // right-middle
-		{70, 440, 134, 440},  // left-bottom
-		{800, 440, 864, 440}, // right-bottom
-		{420, 450, 484, 440}, // bottom-middle
-	}
-
-	flopPos := [][]int{
-		{270, 250}, // Flop
-		{344, 250},
-		{418, 250},
-		{492, 250}, // Turn
-		{566, 250}, // River
-	}
-
-	fmt.Println(tablePos)
-
-	fmt.Println(flopPos)
-}
-
 // Initialize Poker Table Display
 func initTable() {
 
@@ -292,8 +350,9 @@ func initTable() {
 
 func main() {
 	instruct()  // Display current notes on project progress
-	initCards() // init Card Display Structure
-
+	shuffle()   // Shuffle Deck
+	initTable() // Initialize table display
+	//
 	if err := ebiten.Run(update, 1024, 768, 1, "AI POKER - You against eight AI Players!"); err != nil {
 		log.Fatal(err)
 	}
