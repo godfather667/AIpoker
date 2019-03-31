@@ -99,81 +99,34 @@ var deck = map[int]string{
 	52: "images/queen_of_spades.png",
 }
 
-func shuffle() {
-	s1 := time.Now().UnixNano()
-	rand.Seed(s1)
-	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
-
-	rand.Shuffle(52, func(i, j int) {
-		deck[i], deck[j] = deck[j], deck[i]
-	})
-
-	fmt.Println(deck)
-}
-
 func update(screen *ebiten.Image) error {
-
-	// Draw the square image
-	if ebiten.IsDrawingSkipped() {
-		return nil //  Insert Card Image
-	}
 
 	// Fill the Screen with the white color
 	screen.Fill(color.White)
 
-	//  Insert Table Image
-	if table == nil {
-		// Create an Table image
-		table, _, err = ebitenutil.NewImageFromFile(cardTable, ebiten.FilterDefault)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	opts := &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(15, 70)
-	// Draw the table image to the screen with an empty option
-	screen.DrawImage(table, opts)
+	initTable(screen)
 
-	// Inserting Cards Pairs and Back Pairs showing sample placement
-	// This code is only for testing
-	// The display code will be totally different in future versions.
-	//
-	//  Insert Card Image
+	cardDisplay(0, 250, 43, screen)
+	cardDisplay(64, 250, 44, screen)
+
 	if card == nil {
-		// Create an Table image
-		fmt.Println("43")
-		card, _, err = ebitenutil.NewImageFromFile(deck[43], ebiten.FilterDefault)
+		// Create Card image
+		card, _, err = ebitenutil.NewImageFromFile(deck[12], ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	//  Insert Card2 Image
 	if card2 == nil {
-		fmt.Println("44")
-		card2, _, err = ebitenutil.NewImageFromFile(deck[44], ebiten.FilterDefault)
+		// Create Card image
+		card2, _, err = ebitenutil.NewImageFromFile(deck[13], ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-
-	// ---------------------
-	//  left - middle
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(0, 250)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(64, 250)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
 
 	//---------------------
 	// left - Top
-	opts = &ebiten.DrawImageOptions{}
+	opts := &ebiten.DrawImageOptions{}
 	// Add the Translate effect to the option struct.
 	opts.GeoM.Translate(70, 80)
 	// Draw the card image to the screen with an empty option
@@ -343,22 +296,67 @@ func instruct() {
 }
 
 // Initialize Poker Table Display
-func initTable() {
+func initTable(screen *ebiten.Image) {
 
 	//  Insert Table Image
 	if table == nil {
 		// Create an Table image
-		table, _, err = ebitenutil.NewImageFromFile("images/table.png", ebiten.FilterDefault)
+		table, _, err = ebitenutil.NewImageFromFile(cardTable, ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+	// Get Options Structure
+	opts := &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(15, 70)
+	// Draw the table image to the screen with an empty option
+	screen.DrawImage(table, opts)
+}
+
+func shuffle() {
+	s1 := time.Now().UnixNano()
+	rand.Seed(s1)
+	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
+
+	rand.Shuffle(52, func(i, j int) {
+		deck[i], deck[j] = deck[j], deck[i]
+	})
+
+	fmt.Println(deck)
+}
+
+func cardDisplay(x, y float64, cardValue int, screen *ebiten.Image) {
+
+	fmt.Println("cardDisplay")
+	//	var card *ebiten.Image // Card Image Structure
+	//
+	// Inserting Cards Pairs and Back Pairs showing sample placement
+	// This code is only for testing
+	// The display code will be totally different in future versions.
+	//
+	//  Insert Card Image
+	//
+	if card == nil {
+		// Create Card image
+		card, _, err = ebitenutil.NewImageFromFile(deck[cardValue], ebiten.FilterDefault)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	opts := &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(x, y)
+	// Draw the card image to the screen with an empty option
+	screen.DrawImage(card, opts)
 }
 
 func main() {
-	instruct()  // Display current notes on project progress
-	shuffle()   // Shuffle Deck
-	initTable() // Initialize table display
+	instruct() // Display current notes on project progress
+	shuffle()  // Shuffle Deck
+	//
+	// Run Loop
 	//
 	if err := ebiten.Run(update, 1024, 768, 1, "AI POKER - You against eight AI Players!"); err != nil {
 		log.Fatal(err)
