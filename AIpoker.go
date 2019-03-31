@@ -39,59 +39,64 @@ var tablePos = [][]int{
 	{492, 250, -1, -1}, // Turn
 	{566, 250, -1, -1}, // River
 }
+
+var cardTable = "images/table.png"
+
+var cardBack = "images/Playing-cards-back.png"
+
 var deck = map[int]string{
-	1:  "10_of_clubs.png",
-	2:  "10_of_diamonds.png",
-	3:  "10_of_hearts.png",
-	4:  "10_of_spades.png",
-	5:  "2_of_clubs.png",
-	6:  "2_of_diamonds.png",
-	7:  "2_of_hearts.png",
-	8:  "2_of_spades.png",
-	9:  "3_of_clubs.png",
-	10: "3_of_diamonds.png",
-	11: "3_of_hearts.png",
-	12: "3_of_spades.png",
-	13: "4_of_clubs.png",
-	14: "4_of_diamonds.png",
-	15: "4_of_hearts.png",
-	16: "4_of_spades.png",
-	17: "5_of_clubs.png",
-	18: "5_of_diamonds.png",
-	19: "5_of_hearts.png",
-	20: "5_of_spades.png",
-	21: "6_of_clubs.png",
-	22: "6_of_diamonds.png",
-	23: "6_of_hearts.png",
-	24: "6_of_spades.png",
-	25: "7_of_clubs.png",
-	26: "7_of_diamonds.png",
-	27: "7_of_hearts.png",
-	28: "7_of_spades.png",
-	29: "8_of_clubs.png",
-	30: "8_of_diamonds.png",
-	31: "8_of_hearts.png",
-	32: "8_of_spades.png",
-	33: "9_of_clubs.png",
-	34: "9_of_diamonds.png",
-	35: "9_of_hearts.png",
-	36: "9_of_spades.png",
-	37: "ace_of_clubs.png",
-	38: "ace_of_diamonds.png",
-	39: "ace_of_hearts.png",
-	40: "ace_of_spades.png",
-	41: "jack_of_clubs.png",
-	42: "jack_of_diamonds.png",
-	43: "jack_of_hearts.png",
-	44: "jack_of_spades.png",
-	45: "king_of_clubs.png",
-	46: "king_of_diamonds.png",
-	47: "king_of_hearts.png",
-	48: "king_of_spades.png",
-	49: "queen_of_clubs.png",
-	50: "queen_of_diamonds.png",
-	51: "queen_of_hearts.png",
-	52: "queen_of_spades.png",
+	1:  "images/10_of_clubs.png",
+	2:  "images/10_of_diamonds.png",
+	3:  "images/10_of_hearts.png",
+	4:  "images/10_of_spades.png",
+	5:  "images/2_of_clubs.png",
+	6:  "images/2_of_diamonds.png",
+	7:  "images/2_of_hearts.png",
+	8:  "images/2_of_spades.png",
+	9:  "images/3_of_clubs.png",
+	10: "images/3_of_diamonds.png",
+	11: "images/3_of_hearts.png",
+	12: "images/3_of_spades.png",
+	13: "images/4_of_clubs.png",
+	14: "images/4_of_diamonds.png",
+	15: "images/4_of_hearts.png",
+	16: "images/4_of_spades.png",
+	17: "images/5_of_clubs.png",
+	18: "images/5_of_diamonds.png",
+	19: "images/5_of_hearts.png",
+	20: "images/5_of_spades.png",
+	21: "images/6_of_clubs.png",
+	22: "images/6_of_diamonds.png",
+	23: "images/6_of_hearts.png",
+	24: "images/6_of_spades.png",
+	25: "images/7_of_clubs.png",
+	26: "images/7_of_diamonds.png",
+	27: "images/7_of_hearts.png",
+	28: "images/7_of_spades.png",
+	29: "images/8_of_clubs.png",
+	30: "images/8_of_diamonds.png",
+	31: "images/8_of_hearts.png",
+	32: "images/8_of_spades.png",
+	33: "images/9_of_clubs.png",
+	34: "images/9_of_diamonds.png",
+	35: "images/9_of_hearts.png",
+	36: "images/9_of_spades.png",
+	37: "images/ace_of_clubs.png",
+	38: "images/ace_of_diamonds.png",
+	39: "images/ace_of_hearts.png",
+	40: "images/ace_of_spades.png",
+	41: "images/jack_of_clubs.png",
+	42: "images/jack_of_diamonds.png",
+	43: "images/jack_of_hearts.png",
+	44: "images/jack_of_spades.png",
+	45: "images/king_of_clubs.png",
+	46: "images/king_of_diamonds.png",
+	47: "images/king_of_hearts.png",
+	48: "images/king_of_spades.png",
+	49: "images/queen_of_clubs.png",
+	50: "images/queen_of_diamonds.png",
+	51: "images/queen_of_hearts.png",
+	52: "images/queen_of_spades.png",
 }
 
 func shuffle() {
@@ -119,7 +124,7 @@ func update(screen *ebiten.Image) error {
 	//  Insert Table Image
 	if table == nil {
 		// Create an Table image
-		table, _, err = ebitenutil.NewImageFromFile("images/table.png", ebiten.FilterDefault)
+		table, _, err = ebitenutil.NewImageFromFile(cardTable, ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -137,14 +142,16 @@ func update(screen *ebiten.Image) error {
 	//  Insert Card Image
 	if card == nil {
 		// Create an Table image
-		card, _, err = ebitenutil.NewImageFromFile("images/king_of_clubs.png", ebiten.FilterDefault)
+		fmt.Println("43")
+		card, _, err = ebitenutil.NewImageFromFile(deck[43], ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 	//  Insert Card2 Image
 	if card2 == nil {
-		card2, _, err = ebitenutil.NewImageFromFile("images/king_of_hearts.png", ebiten.FilterDefault)
+		fmt.Println("44")
+		card2, _, err = ebitenutil.NewImageFromFile(deck[44], ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
