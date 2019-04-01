@@ -16,11 +16,10 @@ import (
 )
 
 const (
-	cardDeal  = iota // 0
-	cardFlop         // 1
-	cardTurn         // 2
-	cardRiver        // 3
-	cardWait         // Wait for User Action
+	cardDeal  = 01
+	cardFlop  = 02
+	cardTurn  = 04
+	cardRiver = 010
 )
 
 const (
@@ -30,12 +29,12 @@ const (
 	undisplay        // Display Nothing
 )
 
-var table *ebiten.Image
-var card *ebiten.Image
+var table *ebiten.Image // Table Image
+var card *ebiten.Image  // Card Image
 
-var err error
+var err error // Error
 
-var updateMode int // 0 = Deal, 1 = Flop, 2 = Turn, 3 = River
+var updateMode int // 01 = Deal, 02 = Flop, 04 = Turn, 010 = River
 
 var cardTable = "images/table.png"
 
@@ -99,6 +98,10 @@ var deck = map[int]string{
 
 func update(screen *ebiten.Image) error {
 
+	// Logical Operations to Setup Rendering
+
+	updateMode |= cardDeal
+
 	if ebiten.IsDrawingSkipped() {
 		// When the game is running slowly, the rendering result
 		// will not be adopted.
@@ -106,6 +109,7 @@ func update(screen *ebiten.Image) error {
 	}
 
 	initTable(screen)
+
 	deal(updateMode, screen) // Deal Cards
 
 	return nil
@@ -191,14 +195,9 @@ func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 	screen.DrawImage(card, opts)
 }
 
-func deal(cardMode int, screen *ebiten.Image) {
+func deal(mode int, screen *ebiten.Image) {
 
-	if cardMode < 0 && cardMode > 3 { // Insure Valid Deal Mode
-		log.Fatal(err)
-	}
-
-	if cardMode == cardDeal {
-
+	if (mode & cardDeal) != 0 {
 		cardDisplay(0, 250, 1, hide, display, screen)
 		cardDisplay(70, 80, 2, hide, display, screen)
 		cardDisplay(378, 20, 3, hide, display, screen)
@@ -221,19 +220,19 @@ func deal(cardMode int, screen *ebiten.Image) {
 		return
 	}
 
-	if cardMode == cardFlop { // Burn Card = 20
+	if (mode & cardFlop) != 0 { // Burn Card = 20
 		cardDisplay(319, 250, 21, hide, undisplay, screen)
 		cardDisplay(393, 250, 22, hide, undisplay, screen)
 		cardDisplay(467, 250, 23, hide, undisplay, screen)
 		return
 	}
 
-	if cardMode == cardTurn { // Burn Card = 24
+	if (mode & cardTurn) != 0 { // Burn Card = 24
 		cardDisplay(541, 250, 25, hide, undisplay, screen)
 		return
 	}
 
-	if cardMode == cardRiver { // Burn Card = 26
+	if (mode & cardRiver) != 0 { // Burn Card = 26
 		cardDisplay(615, 250, 27, hide, undisplay, screen)
 		return
 	}
@@ -241,9 +240,9 @@ func deal(cardMode int, screen *ebiten.Image) {
 }
 
 func main() {
-	instruct()            // Display current notes on project progress
-	shuffle()             // Shuffle Deck
-	updateMode = cardDeal // Set Mode to Deal Cards
+	instruct()     // Display current notes on project progress
+	shuffle()      // Shuffle Deck
+	updateMode = 0 // Clear Deal Mode
 
 	//
 	// Run Loop
