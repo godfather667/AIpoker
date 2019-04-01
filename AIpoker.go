@@ -15,13 +15,6 @@ import (
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
-var table *ebiten.Image
-var card *ebiten.Image
-var card2 *ebiten.Image
-var cardb *ebiten.Image
-var cardf *ebiten.Image
-var err error
-
 const (
 	cardDeal  = iota // 0
 	cardFlop         // 1
@@ -30,9 +23,6 @@ const (
 	cardWait         // Wait for User Action
 )
 
-var updateMode int // 0 = Deal, 1 = Flop, 2 = Turn, 3 = River
-var oneShot = 0
-
 const (
 	unhide    = iota // Display Card Value
 	hide             // Hide Card Value (Show Card Back)
@@ -40,22 +30,12 @@ const (
 	undisplay        // Display Nothing
 )
 
-var tablePos = [][]int{
-	{420, 450, 484, 440}, // bottom-middle(live Player)
-	{0, 250, 64, 250},    // left-middle
-	{79, 80, 134, 80},    // left-Top
-	{314, 20, 378, 20},   // top-left
-	{560, 20, 624, 20},   // top-right
-	{800, 80, 864, 80},   // right-top
-	{850, 250, 914, 250}, // right-middle
-	{70, 440, 134, 440},  // left-bottom
-	{800, 440, 864, 440}, // right-bottom
-	{270, 250, -1, -1},   // Flop
-	{344, 250, -1, -1},
-	{418, 250, -1. - 1},
-	{492, 250, -1, -1}, // Turn
-	{566, 250, -1, -1}, // River
-}
+var table *ebiten.Image
+var card *ebiten.Image
+
+var err error
+
+var updateMode int // 0 = Deal, 1 = Flop, 2 = Turn, 3 = River
 
 var cardTable = "images/table.png"
 
