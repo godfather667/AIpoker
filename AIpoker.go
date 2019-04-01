@@ -21,7 +21,24 @@ var card2 *ebiten.Image
 var cardb *ebiten.Image
 var cardf *ebiten.Image
 var err error
-var idx int
+
+const (
+	cardDeal  = iota // 0
+	cardFlop         // 1
+	cardTurn         // 2
+	cardRiver        // 3
+	cardWait         // Wait for User Action
+)
+
+var updateMode int // 0 = Deal, 1 = Flop, 2 = Turn, 3 = River
+var oneShot = 0
+
+const (
+	unhide    = iota // Display Card Value
+	hide             // Hide Card Value (Show Card Back)
+	display          // Display card at position
+	undisplay        // Display Nothing
+)
 
 var tablePos = [][]int{
 	{420, 450, 484, 440}, // bottom-middle(live Player)
@@ -42,7 +59,7 @@ var tablePos = [][]int{
 
 var cardTable = "images/table.png"
 
-var cardBack = "images/Playing-cards-back.png"
+var cardBack = "images/playing-cards-back.png"
 
 var deck = map[int]string{
 	1:  "images/10_of_clubs.png",
@@ -76,6 +93,7 @@ var deck = map[int]string{
 	29: "images/8_of_clubs.png",
 	30: "images/8_of_diamonds.png",
 	31: "images/8_of_hearts.png",
+
 	32: "images/8_of_spades.png",
 	33: "images/9_of_clubs.png",
 	34: "images/9_of_diamonds.png",
@@ -101,182 +119,14 @@ var deck = map[int]string{
 
 func update(screen *ebiten.Image) error {
 
-	// Fill the Screen with the white color
-	screen.Fill(color.White)
+	if ebiten.IsDrawingSkipped() {
+		// When the game is running slowly, the rendering result
+		// will not be adopted.
+		return nil
+	}
 
 	initTable(screen)
-
-	cardDisplay(0, 250, 43, screen)
-	cardDisplay(64, 250, 44, screen)
-
-	if card == nil {
-		// Create Card image
-		card, _, err = ebitenutil.NewImageFromFile(deck[12], ebiten.FilterDefault)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	if card2 == nil {
-		// Create Card image
-		card2, _, err = ebitenutil.NewImageFromFile(deck[13], ebiten.FilterDefault)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	//---------------------
-	// left - Top
-	opts := &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(70, 80)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(134, 80)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
-
-	//---------------------
-	// top - left
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(314, 20)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(378, 20)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
-
-	//---------------------
-	// Top - Right
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(560, 20)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(624, 20)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
-
-	//---------------------
-	// right - Top
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(800, 80)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(864, 80)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
-
-	//---------------------
-	// Right - Middle
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(850, 250)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(914, 250)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
-
-	//---------------------
-	// Left - Bottom
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(70, 440)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(134, 440)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
-
-	//---------------------
-	// Right - Bottom
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(800, 440)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(864, 440)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
-
-	//---------------------
-	// bottom - Middle
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(420, 460)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-
-	opts = &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(484, 460)
-	// Draw the square image to the screen with an empty option
-	screen.DrawImage(card2, opts)
-
-	// Insert Flop Cards
-
-	for i := 0; i < 5; i++ {
-		switch i {
-		case 0:
-			cardf, _, err = ebitenutil.NewImageFromFile("images/ace_of_clubs.png", ebiten.FilterDefault)
-			if err != nil {
-				log.Fatal(err)
-			}
-			idx = 344
-		case 1:
-			cardf, _, err = ebitenutil.NewImageFromFile("images/ace_of_hearts.png", ebiten.FilterDefault)
-			if err != nil {
-				log.Fatal(err)
-			}
-			idx = 418
-		case 2:
-			cardf, _, err = ebitenutil.NewImageFromFile("images/ace_of_spades.png", ebiten.FilterDefault)
-			if err != nil {
-				log.Fatal(err)
-			}
-			idx = 492
-		case 3:
-			cardf, _, err = ebitenutil.NewImageFromFile("images/jack_of_diamonds.png", ebiten.FilterDefault)
-			if err != nil {
-				log.Fatal(err)
-			}
-			idx = 566
-		case 4:
-			cardf, _, err = ebitenutil.NewImageFromFile("images/jack_of_clubs.png", ebiten.FilterDefault)
-			if err != nil {
-				log.Fatal(err)
-			}
-			idx = 640
-		}
-		opts = &ebiten.DrawImageOptions{}
-		// Add the Translate effect to the option struct.
-		opts.GeoM.Translate(float64(idx)-25, 250)
-		// Draw the square image to the screen with an empty option
-		screen.DrawImage(cardf, opts)
-	}
+	deal(updateMode, screen) // Deal Cards
 
 	return nil
 }
@@ -298,14 +148,20 @@ func instruct() {
 // Initialize Poker Table Display
 func initTable(screen *ebiten.Image) {
 
+	// Fill the Screen with the white color
+	screen.Fill(color.White)
+
 	//  Insert Table Image
 	if table == nil {
+		// Fill the Screen with the white color
+		screen.Fill(color.White)
 		// Create an Table image
 		table, _, err = ebitenutil.NewImageFromFile(cardTable, ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+
 	// Get Options Structure
 	opts := &ebiten.DrawImageOptions{}
 	// Add the Translate effect to the option struct.
@@ -323,28 +179,31 @@ func shuffle() {
 		deck[i], deck[j] = deck[j], deck[i]
 	})
 
-	fmt.Println(deck)
 }
 
-func cardDisplay(x, y float64, cardValue int, screen *ebiten.Image) {
+func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 
-	fmt.Println("cardDisplay")
-	//	var card *ebiten.Image // Card Image Structure
-	//
-	// Inserting Cards Pairs and Back Pairs showing sample placement
-	// This code is only for testing
-	// The display code will be totally different in future versions.
-	//
-	//  Insert Card Image
-	//
-	if card == nil {
-		// Create Card image
+	// Create Card image
+	//	fmt.Println("cval = ", cardValue, "  Card = ", deck[cardValue])
+	//	fmt.Println("x = ", x, " y = ", y, " h = ", h, " d = ", d)
+	if d == undisplay {
+		//		fmt.Println("display = ", d)
+		return
+	}
+	if h == hide {
+		//		fmt.Println("hide = ", h)
+		card, _, err = ebitenutil.NewImageFromFile(cardBack, ebiten.FilterDefault)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		//		fmt.Println("unhide = ", h)
 		card, _, err = ebitenutil.NewImageFromFile(deck[cardValue], ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-
+	// Display Image
 	opts := &ebiten.DrawImageOptions{}
 	// Add the Translate effect to the option struct.
 	opts.GeoM.Translate(x, y)
@@ -352,9 +211,60 @@ func cardDisplay(x, y float64, cardValue int, screen *ebiten.Image) {
 	screen.DrawImage(card, opts)
 }
 
+func deal(cardMode int, screen *ebiten.Image) {
+
+	if cardMode < 0 && cardMode > 3 { // Insure Valid Deal Mode
+		log.Fatal(err)
+	}
+
+	if cardMode == cardDeal {
+
+		cardDisplay(0, 250, 1, hide, display, screen)
+		cardDisplay(70, 80, 2, hide, display, screen)
+		cardDisplay(378, 20, 3, hide, display, screen)
+		cardDisplay(560, 20, 4, hide, display, screen)
+		cardDisplay(800, 80, 5, hide, display, screen)
+		cardDisplay(850, 250, 6, hide, display, screen)
+		cardDisplay(70, 440, 7, hide, display, screen)
+		cardDisplay(800, 440, 8, hide, display, screen)
+		cardDisplay(420, 460, 9, unhide, display, screen)
+
+		cardDisplay(64, 250, 10, hide, display, screen)
+		cardDisplay(134, 80, 11, hide, display, screen)
+		cardDisplay(314, 20, 12, hide, display, screen)
+		cardDisplay(624, 20, 13, hide, display, screen)
+		cardDisplay(864, 80, 14, hide, display, screen)
+		cardDisplay(914, 250, 15, hide, display, screen)
+		cardDisplay(134, 440, 16, hide, display, screen)
+		cardDisplay(864, 440, 17, hide, display, screen)
+		cardDisplay(484, 460, 18, unhide, display, screen)
+		return
+	}
+
+	if cardMode == cardFlop { // Burn Card = 20
+		cardDisplay(319, 250, 21, hide, undisplay, screen)
+		cardDisplay(393, 250, 22, hide, undisplay, screen)
+		cardDisplay(467, 250, 23, hide, undisplay, screen)
+		return
+	}
+
+	if cardMode == cardTurn { // Burn Card = 24
+		cardDisplay(541, 250, 25, hide, undisplay, screen)
+		return
+	}
+
+	if cardMode == cardRiver { // Burn Card = 26
+		cardDisplay(615, 250, 27, hide, undisplay, screen)
+		return
+	}
+	return
+}
+
 func main() {
-	instruct() // Display current notes on project progress
-	shuffle()  // Shuffle Deck
+	instruct()            // Display current notes on project progress
+	shuffle()             // Shuffle Deck
+	updateMode = cardDeal // Set Mode to Deal Cards
+
 	//
 	// Run Loop
 	//
