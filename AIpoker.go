@@ -256,6 +256,8 @@ func initTable(screen *ebiten.Image) {
 
 	charDisplay(8, "New Message", 600, 700, screen)
 
+	messageSquare(150, 90, 20, 700, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
+
 }
 
 func shuffle() {
@@ -353,12 +355,24 @@ func charDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 	case 5:
 		text.Draw(screen, msg, tinyArcadeFont, x, y, color.Black)
 	default:
-		charError("Text Error: Unknown Font Code", screen)
+		messageError("Text Error: Unknown Font Code", screen)
 	}
 }
 
-func charError(msg string, screen *ebiten.Image) {
+func messageError(msg string, screen *ebiten.Image) {
 	text.Draw(screen, msg, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
+}
+
+func messageSquare(sx, sy int, px, py float64, colorCode color.NRGBA, screen *ebiten.Image) {
+
+	square, _ := ebiten.NewImage(sx, sy, ebiten.FilterNearest)
+	square.Fill(colorCode)
+
+	opts := &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(px, py)
+	// Draw the card image to the screen with an empty option
+	screen.DrawImage(square, opts)
 }
 
 func main() {
