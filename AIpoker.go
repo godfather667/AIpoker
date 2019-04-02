@@ -353,8 +353,12 @@ func charDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 	case 5:
 		text.Draw(screen, msg, tinyArcadeFont, x, y, color.Black)
 	default:
-		text.Draw(screen, "DEFAULT Error - Unknown Font", smallArcadeFont, 250, 760, color.NRGBA{0xea, 0x1e, 0x2f, 0xff})
+		charError("Text Error: Unknown Font Code", screen)
 	}
+}
+
+func charError(msg string, screen *ebiten.Image) {
+	text.Draw(screen, msg, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
 }
 
 func main() {
