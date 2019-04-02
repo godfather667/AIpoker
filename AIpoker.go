@@ -28,6 +28,14 @@ const (
 )
 
 const (
+	mPlus = iota // mplus fonts
+	mSmall
+	mTiny
+	aPlus // Arcade fonts
+	aSmall
+	aTiny
+)
+const (
 	unhide    = iota // Display Card Value
 	hide             // Hide Card Value (Show Card Back)
 	display          // Display card at position
@@ -41,9 +49,12 @@ const (
 	dpi = 72
 )
 
-var mplusNormalFont font.Face
+var mplusNormalFont font.Face // Font Variables
 var smallNormalFont font.Face
 var tinyNormalFont font.Face
+var arcadeFont font.Face
+var smallArcadeFont font.Face
+var tinyArcadeFont font.Face
 
 var table *ebiten.Image // Table Image
 var card *ebiten.Image  // Card Image
@@ -112,9 +123,11 @@ var deck = map[int]string{
 	52: "images/queen_of_spades.png",
 }
 
-func init() {
+func init() { // Initialize Normal Fonts
 
-	// Seup a new font for text display
+	// Seup a new fonts for text display
+
+	// Initialize Normal Fonts
 
 	tt, err := truetype.Parse(fonts.MPlus1pRegular_ttf)
 	if err != nil {
@@ -138,10 +151,34 @@ func init() {
 		DPI:     dpi,
 		Hinting: font.HintingFull,
 	})
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// Insure Good Random Number
-	s1 := time.Now().UnixNano()
-	rand.Seed(s1)
+	// Initialize Arcade Fonts
+
+	tt, err = truetype.Parse(fonts.ArcadeN_ttf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	arcadeFont = truetype.NewFace(tt, &truetype.Options{
+		Size:    24,
+		DPI:     dpi,
+		Hinting: font.HintingFull,
+	})
+	smallArcadeFont = truetype.NewFace(tt, &truetype.Options{
+		Size:    18,
+		DPI:     dpi,
+		Hinting: font.HintingFull,
+	})
+	tinyArcadeFont = truetype.NewFace(tt, &truetype.Options{
+		Size:    12,
+		DPI:     dpi,
+		Hinting: font.HintingFull,
+	})
+
+	// Insure Good Random Number - Initialize Seed with Nano-second time value!
+	rand.Seed(time.Now().UnixNano())
 
 }
 
@@ -161,8 +198,6 @@ func update(screen *ebiten.Image) error {
 
 	deal(updateMode, screen) // Deal Cards
 
-	charDisplay(screen)
-
 	return nil
 }
 
@@ -181,6 +216,7 @@ func instruct() {
 }
 
 // Initialize Poker Table Display
+
 func initTable(screen *ebiten.Image) {
 
 	// Fill the Screen with the white color
@@ -196,8 +232,6 @@ func initTable(screen *ebiten.Image) {
 			log.Fatal(err)
 		}
 	}
-	// Draw the sample text
-	text.Draw(screen, "Deal", mplusNormalFont, 600, 40, color.White)
 
 	// Get Options Structure
 	opts := &ebiten.DrawImageOptions{}
@@ -207,8 +241,18 @@ func initTable(screen *ebiten.Image) {
 	screen.DrawImage(table, opts)
 
 	// Add Text
-	text.Draw(screen, "Deal", mplusNormalFont, 600, 80, color.Black)
+	/*	xx := 70
+		yy := 600
+		ttext := "String"
+		text.Draw(screen, ttext, mplusNormalFont, xx, yy, color.Black)
+	*/
 
+	charDisplay(mPlus, "New Message", 0, 600, screen)
+	charDisplay(mSmall, "New Message", 200, 600, screen)
+	charDisplay(mTiny, "New Message", 400, 600, screen)
+	charDisplay(aPlus, "New Message", 0, 700, screen)
+	charDisplay(aSmall, "New Message", 300, 700, screen)
+	charDisplay(aTiny, "New Message", 600, 700, screen)
 }
 
 func shuffle() {
@@ -223,20 +267,15 @@ func shuffle() {
 func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 
 	// Create Card image
-	//	fmt.Println("cval = ", cardValue, "  Card = ", deck[cardValue])
-	//	fmt.Println("x = ", x, " y = ", y, " h = ", h, " d = ", d)
 	if d == undisplay {
-		//		fmt.Println("display = ", d)
 		return
 	}
 	if h == hide {
-		//		fmt.Println("hide = ", h)
 		card, _, err = ebitenutil.NewImageFromFile(cardBack, ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
-		//		fmt.Println("unhide = ", h)
 		card, _, err = ebitenutil.NewImageFromFile(deck[cardValue], ebiten.FilterDefault)
 		if err != nil {
 			log.Fatal(err)
@@ -295,12 +334,24 @@ func deal(mode int, screen *ebiten.Image) {
 	return
 }
 
-func charDisplay(screen *ebiten.Image) {
+func charDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 	// Add Text
-	text.Draw(screen, "Deal", smallNormalFont, 20, 700, color.Black)
-	text.Draw(screen, "Deal", tinyNormalFont, 100, 700, color.Black)
-	text.Draw(screen, "Deal", tinyNormalFont, 200, 700, color.Black)
-
+	switch font {
+	case 0:
+		text.Draw(screen, msg, mplusNormalFont, x, y, color.Black)
+	case 1:
+		text.Draw(screen, msg, smallNormalFont, x, y, color.Black)
+	case 2:
+		text.Draw(screen, msg, tinyNormalFont, x, y, color.Black)
+	case 3:
+		text.Draw(screen, msg, arcadeFont, x, y, color.Black)
+	case 4:
+		text.Draw(screen, msg, smallArcadeFont, x, y, color.Black)
+	case 5:
+		text.Draw(screen, msg, tinyArcadeFont, x, y, color.Black)
+	default:
+		text.Draw(screen, "DEFAULT Error - Unknown Font", smallNormalFont, 300, 740, color.Black)
+	}
 }
 
 func main() {
