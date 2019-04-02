@@ -246,18 +246,22 @@ func initTable(screen *ebiten.Image) {
 		ttext := "String"
 		text.Draw(screen, ttext, mplusNormalFont, xx, yy, color.Black)
 	*/
+	/*
+		charDisplay(mPlus, "New Message", 0, 600, screen)
+		charDisplay(mSmall, "New Message", 200, 600, screen)
+		charDisplay(mTiny, "New Message", 400, 600, screen)
+		charDisplay(aPlus, "New Message", 0, 700, screen)
+		charDisplay(aSmall, "New Message", 300, 700, screen)
+		charDisplay(aTiny, "New Message", 600, 700, screen)
+	*/
+	messageSquare(150, 90, 20, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
+	charDisplay(aSmall, "CHECK", 40, 650, screen)
 
-	charDisplay(mPlus, "New Message", 0, 600, screen)
-	charDisplay(mSmall, "New Message", 200, 600, screen)
-	charDisplay(mTiny, "New Message", 400, 600, screen)
-	charDisplay(aPlus, "New Message", 0, 700, screen)
-	charDisplay(aSmall, "New Message", 300, 700, screen)
-	charDisplay(aTiny, "New Message", 600, 700, screen)
+	messageSquare(150, 90, 170, 600, color.NRGBA{0xff, 0x00, 0x00, 0xff}, screen)
+	charDisplay(aSmall, "FOLD", 210, 650, screen)
 
-	charDisplay(8, "New Message", 600, 700, screen)
-
-	messageSquare(150, 90, 20, 700, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
-
+	messageSquare(150, 90, 320, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
+	charDisplay(aSmall, " BET", 360, 650, screen)
 }
 
 func shuffle() {
