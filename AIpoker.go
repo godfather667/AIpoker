@@ -42,6 +42,8 @@ const (
 )
 
 var mplusNormalFont font.Face
+var smallNormalFont font.Face
+var tinyNormalFont font.Face
 
 var table *ebiten.Image // Table Image
 var card *ebiten.Image  // Card Image
@@ -121,6 +123,18 @@ func init() {
 
 	mplusNormalFont = truetype.NewFace(tt, &truetype.Options{
 		Size:    24,
+		DPI:     dpi,
+		Hinting: font.HintingFull,
+	})
+
+	smallNormalFont = truetype.NewFace(tt, &truetype.Options{
+		Size:    18,
+		DPI:     dpi,
+		Hinting: font.HintingFull,
+	})
+
+	tinyNormalFont = truetype.NewFace(tt, &truetype.Options{
+		Size:    12,
 		DPI:     dpi,
 		Hinting: font.HintingFull,
 	})
@@ -283,7 +297,10 @@ func deal(mode int, screen *ebiten.Image) {
 
 func charDisplay(screen *ebiten.Image) {
 	// Add Text
-	text.Draw(screen, "Deal", mplusNormalFont, 20, 700, color.Black)
+	text.Draw(screen, "Deal", smallNormalFont, 20, 700, color.Black)
+	text.Draw(screen, "Deal", tinyNormalFont, 100, 700, color.Black)
+	text.Draw(screen, "Deal", tinyNormalFont, 200, 700, color.Black)
+
 }
 
 func main() {
