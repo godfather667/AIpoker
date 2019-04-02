@@ -253,6 +253,9 @@ func initTable(screen *ebiten.Image) {
 	charDisplay(aPlus, "New Message", 0, 700, screen)
 	charDisplay(aSmall, "New Message", 300, 700, screen)
 	charDisplay(aTiny, "New Message", 600, 700, screen)
+
+	charDisplay(8, "New Message", 600, 700, screen)
+
 }
 
 func shuffle() {
@@ -350,7 +353,7 @@ func charDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 	case 5:
 		text.Draw(screen, msg, tinyArcadeFont, x, y, color.Black)
 	default:
-		text.Draw(screen, "DEFAULT Error - Unknown Font", smallNormalFont, 300, 740, color.Black)
+		text.Draw(screen, "DEFAULT Error - Unknown Font", smallArcadeFont, 250, 760, color.NRGBA{0xea, 0x1e, 0x2f, 0xff})
 	}
 }
 
