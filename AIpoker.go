@@ -11,8 +11,13 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/golang/freetype/truetype"
+	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
+	"golang.org/x/image/font"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/hajimehoshi/ebiten/text"
 )
 
 const (
@@ -28,6 +33,15 @@ const (
 	display          // Display card at position
 	undisplay        // Display Nothing
 )
+
+const (
+	screenWidth  = 1024
+	screenHeight = 768
+
+	dpi = 72
+)
+
+var mplusNormalFont font.Face
 
 var table *ebiten.Image // Table Image
 var card *ebiten.Image  // Card Image
@@ -96,6 +110,27 @@ var deck = map[int]string{
 	52: "images/queen_of_spades.png",
 }
 
+func init() {
+
+	// Seup a new font for text display
+
+	tt, err := truetype.Parse(fonts.MPlus1pRegular_ttf)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mplusNormalFont = truetype.NewFace(tt, &truetype.Options{
+		Size:    24,
+		DPI:     dpi,
+		Hinting: font.HintingFull,
+	})
+
+	// Insure Good Random Number
+	s1 := time.Now().UnixNano()
+	rand.Seed(s1)
+
+}
+
 func update(screen *ebiten.Image) error {
 
 	// Logical Operations to Setup Rendering
@@ -111,6 +146,8 @@ func update(screen *ebiten.Image) error {
 	initTable(screen)
 
 	deal(updateMode, screen) // Deal Cards
+
+	charDisplay(screen)
 
 	return nil
 }
@@ -145,6 +182,8 @@ func initTable(screen *ebiten.Image) {
 			log.Fatal(err)
 		}
 	}
+	// Draw the sample text
+	text.Draw(screen, "Deal", mplusNormalFont, 600, 40, color.White)
 
 	// Get Options Structure
 	opts := &ebiten.DrawImageOptions{}
@@ -152,11 +191,13 @@ func initTable(screen *ebiten.Image) {
 	opts.GeoM.Translate(15, 70)
 	// Draw the table image to the screen with an empty option
 	screen.DrawImage(table, opts)
+
+	// Add Text
+	text.Draw(screen, "Deal", mplusNormalFont, 600, 80, color.Black)
+
 }
 
 func shuffle() {
-	s1 := time.Now().UnixNano()
-	rand.Seed(s1)
 	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
 
 	rand.Shuffle(52, func(i, j int) {
@@ -236,7 +277,13 @@ func deal(mode int, screen *ebiten.Image) {
 		cardDisplay(615, 250, 27, hide, undisplay, screen)
 		return
 	}
+
 	return
+}
+
+func charDisplay(screen *ebiten.Image) {
+	// Add Text
+	text.Draw(screen, "Deal", mplusNormalFont, 20, 700, color.Black)
 }
 
 func main() {
