@@ -20,11 +20,14 @@ import (
 	"github.com/hajimehoshi/ebiten/text"
 )
 
+type Bits uint8 // Bit Mask for updateMode
+
 const (
-	cardDeal  = 01
-	cardFlop  = 02
-	cardTurn  = 04
-	cardRiver = 010
+	cardDeal = 1 << iota // Update Mask Encoding
+	cardFlop
+	cardTurn
+	cardRiver
+	betValue
 )
 
 const (
@@ -49,6 +52,8 @@ const (
 	dpi = 72
 )
 
+var updateMode Bits // Update Mask
+
 var mplusNormalFont font.Face // Font Variables
 var smallNormalFont font.Face
 var tinyNormalFont font.Face
@@ -60,8 +65,6 @@ var table *ebiten.Image // Table Image
 var card *ebiten.Image  // Card Image
 
 var err error // Error
-
-var updateMode int // 01 = Deal, 02 = Flop, 04 = Turn, 010 = River
 
 var cardTable = "images/table.png"
 
@@ -182,11 +185,23 @@ func init() { // Initialize Normal Fonts
 
 }
 
+// Bit Wise Functions
+//
+func Set(b, flag Bits) Bits { return b | flag }
+
+func Clear(b, flag Bits) Bits { return b &^ flag }
+
+func Toggle(b, flag Bits) Bits { return b ^ flag }
+
+func Has(b, flag Bits) bool { return b&flag != 0 }
+
+// Update called each Run Cycle
+//
 func update(screen *ebiten.Image) error {
 
 	// Logical Operations to Setup Rendering
 
-	updateMode |= cardDeal
+	updateMode = Set(updateMode, cardDeal)
 
 	if ebiten.IsDrawingSkipped() {
 		// When the game is running slowly, the rendering result
@@ -197,6 +212,15 @@ func update(screen *ebiten.Image) error {
 	initTable(screen)
 
 	deal(updateMode, screen) // Deal Cards
+
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		if x > 320 && x < 470 && y > 600 && y < 690 {
+			fmt.Println("x = ", x, "  y = ", y)
+			updateMode = Set(updateMode, betValue)
+
+		}
+	}
 
 	return nil
 }
@@ -240,19 +264,14 @@ func initTable(screen *ebiten.Image) {
 	// Draw the table image to the screen with an empty option
 	screen.DrawImage(table, opts)
 
-	// Add Text
-	/*	xx := 70
-		yy := 600
-		ttext := "String"
-		text.Draw(screen, ttext, mplusNormalFont, xx, yy, color.Black)
-	*/
-	/*
-		charDisplay(mPlus, "New Message", 0, 600, screen)
-		charDisplay(mSmall, "New Message", 200, 600, screen)
-		charDisplay(mTiny, "New Message", 400, 600, screen)
-		charDisplay(aPlus, "New Message", 0, 700, screen)
-		charDisplay(aSmall, "New Message", 300, 700, screen)
-		charDisplay(aTiny, "New Message", 600, 700, screen)
+	/*  Character Display Function
+
+	charDisplay(mPlus, "New Message", 0, 600, screen)
+	charDisplay(mSmall, "New Message", 200, 600, screen)
+	charDisplay(mTiny, "New Message", 400, 600, screen)
+	charDisplay(aPlus, "New Message", 0, 700, screen)
+	charDisplay(aSmall, "New Message", 300, 700, screen)
+	charDisplay(aTiny, "New Message", 600, 700, screen)
 	*/
 	messageSquare(150, 90, 20, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
 	charDisplay(aSmall, "CHECK", 40, 650, screen)
@@ -262,6 +281,10 @@ func initTable(screen *ebiten.Image) {
 
 	messageSquare(150, 90, 320, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
 	charDisplay(aSmall, " BET", 360, 650, screen)
+
+	if Has(updateMode, betValue) {
+		charDisplay(aTiny, "Value: _____", 500, 650, screen)
+	}
 }
 
 func shuffle() {
@@ -298,9 +321,9 @@ func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 	screen.DrawImage(card, opts)
 }
 
-func deal(mode int, screen *ebiten.Image) {
+func deal(mode Bits, screen *ebiten.Image) {
 
-	if (mode & cardDeal) != 0 {
+	if Has(updateMode, cardDeal) {
 		cardDisplay(0, 250, 1, hide, display, screen)
 		cardDisplay(70, 80, 2, hide, display, screen)
 		cardDisplay(378, 20, 3, hide, display, screen)
@@ -380,8 +403,9 @@ func messageSquare(sx, sy int, px, py float64, colorCode color.NRGBA, screen *eb
 }
 
 func main() {
-	instruct()     // Display current notes on project progress
-	shuffle()      // Shuffle Deck
+	instruct() // Display current notes on project progress
+	shuffle()  // Shuffle Deck
+
 	updateMode = 0 // Clear Deal Mode
 
 	//
