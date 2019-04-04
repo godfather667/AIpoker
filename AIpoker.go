@@ -28,6 +28,9 @@ const (
 	cardTurn
 	cardRiver
 	betValue
+	betInput
+	betEnable
+	inputWait
 )
 
 const (
@@ -53,6 +56,8 @@ const (
 )
 
 var updateMode Bits // Update Mask
+
+var valueResult int64 // Value input value
 
 var mplusNormalFont font.Face // Font Variables
 var smallNormalFont font.Face
@@ -201,24 +206,34 @@ func update(screen *ebiten.Image) error {
 
 	// Logical Operations to Setup Rendering
 
-	updateMode = Set(updateMode, cardDeal)
+	if Has(updateMode, cardDeal) {
 
-	if ebiten.IsDrawingSkipped() {
-		// When the game is running slowly, the rendering result
-		// will not be adopted.
-		return nil
+		if ebiten.IsDrawingSkipped() {
+			// When the game is running slowly, the rendering result
+			// will not be adopted.
+			return nil
+		}
+		initTable(screen)
+
+		deal(updateMode, screen)                // Deal Cards
+		updateMode = Set(updateMode, betEnable) // Enable Message Boxes
+		updateMode = Set(updateMode, betValue)  // Process various Bet Options
 	}
 
-	initTable(screen)
-
-	deal(updateMode, screen) // Deal Cards
-
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && Has(updateMode, betValue) {
 		x, y := ebiten.CursorPosition()
 		if x > 320 && x < 470 && y > 600 && y < 690 {
-			fmt.Println("x = ", x, "  y = ", y)
-			updateMode = Set(updateMode, betValue)
-
+			updateMode = Clear(updateMode, betValue)
+			updateMode = Set(updateMode, betInput)
+		}
+	}
+	if Has(updateMode, betInput) {
+		txt, hasCR := TextInput(screen)
+		if hasCR {
+			Clear(updateMode, betInput)
+			Clear(updateMode, betValue)
+		} else {
+			charDisplay(1, txt, 550, 650, screen)
 		}
 	}
 
@@ -228,12 +243,6 @@ func update(screen *ebiten.Image) error {
 func instruct() {
 	fmt.Println("\n                        A I  P O K E R")
 	fmt.Println("\nAIpoker is the initial concept design for an AI Based Poker Simulation")
-	// Fill the Screen with the white color
-	//	screen.Fill(color.White)
-
-	fmt.Println("Currently it only displays a empty table.")
-	fmt.Println("\nHowever, the 'images' directory contains all the cards and other necessary images.")
-	fmt.Println("Still a huge amount of work to do.\n")
 	fmt.Println("Only one 'bug' at the moment: You must put the cursor in the image box for")
 	fmt.Println("the entire image to be completely displayed.")
 	fmt.Println("\nThis 'Feature' also shows up in their example games. May take Big Think!")
@@ -264,26 +273,20 @@ func initTable(screen *ebiten.Image) {
 	// Draw the table image to the screen with an empty option
 	screen.DrawImage(table, opts)
 
-	/*  Character Display Function
+	if Has(updateMode, betEnable) {
+		messageSquare(150, 90, 20, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
+		charDisplay(aSmall, "CHECK", 40, 650, screen)
 
-	charDisplay(mPlus, "New Message", 0, 600, screen)
-	charDisplay(mSmall, "New Message", 200, 600, screen)
-	charDisplay(mTiny, "New Message", 400, 600, screen)
-	charDisplay(aPlus, "New Message", 0, 700, screen)
-	charDisplay(aSmall, "New Message", 300, 700, screen)
-	charDisplay(aTiny, "New Message", 600, 700, screen)
-	*/
-	messageSquare(150, 90, 20, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
-	charDisplay(aSmall, "CHECK", 40, 650, screen)
+		messageSquare(150, 90, 170, 600, color.NRGBA{0xff, 0x00, 0x00, 0xff}, screen)
+		charDisplay(aSmall, "FOLD", 210, 650, screen)
 
-	messageSquare(150, 90, 170, 600, color.NRGBA{0xff, 0x00, 0x00, 0xff}, screen)
-	charDisplay(aSmall, "FOLD", 210, 650, screen)
+		messageSquare(150, 90, 320, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
+		charDisplay(aSmall, " BET", 360, 650, screen)
 
-	messageSquare(150, 90, 320, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
-	charDisplay(aSmall, " BET", 360, 650, screen)
-
-	if Has(updateMode, betValue) {
-		charDisplay(aTiny, "Value: _____", 500, 650, screen)
+		if Has(updateMode, betValue) {
+			charDisplay(aTiny, "Value: ", 500, 650, screen)
+			Set(updateMode, betInput)
+		}
 	}
 }
 
@@ -293,7 +296,6 @@ func shuffle() {
 	rand.Shuffle(52, func(i, j int) {
 		deck[i], deck[j] = deck[j], deck[i]
 	})
-
 }
 
 func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
@@ -406,7 +408,7 @@ func main() {
 	instruct() // Display current notes on project progress
 	shuffle()  // Shuffle Deck
 
-	updateMode = 0 // Clear Deal Mode
+	updateMode = cardDeal // Clear Deal Mode
 
 	//
 	// Run Loop
