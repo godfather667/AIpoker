@@ -217,13 +217,12 @@ func update(screen *ebiten.Image) error {
 
 		deal(updateMode, screen)                // Deal Cards
 		updateMode = Set(updateMode, betEnable) // Enable Message Boxes
-		updateMode = Set(updateMode, betValue)  // Process various Bet Options
 	}
 
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && Has(updateMode, betValue) {
 		x, y := ebiten.CursorPosition()
 		if x > 320 && x < 470 && y > 600 && y < 690 {
-			updateMode = Clear(updateMode, betValue)
+			updateMode = Set(updateMode, betValue) // Process various Bet Options
 			updateMode = Set(updateMode, betInput)
 		}
 	}
