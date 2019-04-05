@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
@@ -29,10 +31,12 @@ func TextInput(screen *ebiten.Image) (tx string, e bool) {
 	// Note that InputChars result changes every frame, so you need to call this
 	// every frame.
 	tx += string(ebiten.InputChars())
-
 	// If the enter key is pressed, add a line break.
 	if repeatingKeyPressed(ebiten.KeyEnter) || repeatingKeyPressed(ebiten.KeyKPEnter) {
 		tx += "\n"
+		if len(tx) > 0 {
+			fmt.Println("tx = ", tx)
+		}
 		return tx, true
 	}
 
@@ -41,6 +45,9 @@ func TextInput(screen *ebiten.Image) (tx string, e bool) {
 		if len(tx) >= 1 {
 			tx = tx[:len(tx)-1]
 		}
+	}
+	if len(tx) > 0 {
+		fmt.Println("return tx = ", tx)
 	}
 	return tx, false
 }

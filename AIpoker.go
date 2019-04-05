@@ -20,7 +20,7 @@ import (
 	"github.com/hajimehoshi/ebiten/text"
 )
 
-type Bits uint8 // Bit Mask for updateMode
+type Bits uint8 // Bit Mask for mode
 
 const (
 	cardDeal = 1 << iota // Update Mask Encoding
@@ -55,9 +55,9 @@ const (
 	dpi = 72
 )
 
-var updateMode Bits // Update Mask
+var mode Bits // Update Mask
 
-var valueResult int64 // Value input value
+var result int64 // Value input value
 
 var mplusNormalFont font.Face // Font Variables
 var smallNormalFont font.Face
@@ -206,37 +206,43 @@ func update(screen *ebiten.Image) error {
 
 	// Logical Operations to Setup Rendering
 
-	if Has(updateMode, cardDeal) {
+	if Has(mode, cardDeal) {
 
 		if ebiten.IsDrawingSkipped() {
-			// When the game is running slowly, the rendering result
+			// When the game is running slowly, the rendering data
 			// will not be adopted.
 			return nil
 		}
 		initTable(screen)
 
-		deal(updateMode, screen)                // Deal Cards
-		updateMode = Set(updateMode, betEnable) // Enable Message Boxes
-	}
+		deal(mode, screen)          // Deal Cards
+		mode = Set(mode, betEnable) // Enable Message Boxes
 
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && Has(updateMode, betValue) {
-		x, y := ebiten.CursorPosition()
-		if x > 320 && x < 470 && y > 600 && y < 690 {
-			updateMode = Set(updateMode, betValue) // Process various Bet Options
-			updateMode = Set(updateMode, betInput)
+		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && Has(mode, betEnable) {
+			x, y := ebiten.CursorPosition()
+			if x > 320 && x < 470 && y > 600 && y < 690 {
+				if !Has(mode, betValue) {
+					result = ""
+					fmt.Println("x ", x, "  y ", y)
+				}
+				mode = Set(mode, betValue) // Process various Bet Options
+				mode = Set(mode, betInput)
+			}
 		}
-	}
-	if Has(updateMode, betInput) {
-		txt, hasCR := TextInput(screen)
-		if hasCR {
-			Clear(updateMode, betInput)
-			Clear(updateMode, betValue)
-		} else {
-			charDisplay(1, txt, 550, 650, screen)
+		if Has(mode, betInput) {
+			txt, hasCR := TextInput(screen)
+			if len(txt) > 0 {
+				result += txt
+				fmt.Println("txt = ", txt, " result = ", result)
+				charDisplay(1, txt, 580, 745, screen)
+			}
+			if hasCR {
+				Clear(mode, betInput)
+				Clear(mode, betValue)
+			}
 		}
+		return nil
 	}
-
-	return nil
 }
 
 func instruct() {
@@ -272,7 +278,7 @@ func initTable(screen *ebiten.Image) {
 	// Draw the table image to the screen with an empty option
 	screen.DrawImage(table, opts)
 
-	if Has(updateMode, betEnable) {
+	if Has(mode, betEnable) {
 		messageSquare(150, 90, 20, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
 		charDisplay(aSmall, "CHECK", 40, 650, screen)
 
@@ -282,9 +288,9 @@ func initTable(screen *ebiten.Image) {
 		messageSquare(150, 90, 320, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
 		charDisplay(aSmall, " BET", 360, 650, screen)
 
-		if Has(updateMode, betValue) {
+		if Has(mode, betValue) {
 			charDisplay(aTiny, "Value: ", 500, 650, screen)
-			Set(updateMode, betInput)
+			Set(mode, betInput)
 		}
 	}
 }
@@ -324,7 +330,7 @@ func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 
 func deal(mode Bits, screen *ebiten.Image) {
 
-	if Has(updateMode, cardDeal) {
+	if Has(mode, cardDeal) {
 		cardDisplay(0, 250, 1, hide, display, screen)
 		cardDisplay(70, 80, 2, hide, display, screen)
 		cardDisplay(378, 20, 3, hide, display, screen)
@@ -407,7 +413,7 @@ func main() {
 	instruct() // Display current notes on project progress
 	shuffle()  // Shuffle Deck
 
-	updateMode = cardDeal // Clear Deal Mode
+	mode = cardDeal // Clear Deal Mode
 
 	//
 	// Run Loop
