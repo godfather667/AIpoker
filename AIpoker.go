@@ -57,7 +57,7 @@ const (
 
 var mode Bits // Update Mask
 
-var result int64 // Value input value
+var result string // Value input value
 
 var mplusNormalFont font.Face // Font Variables
 var smallNormalFont font.Face
@@ -206,6 +206,27 @@ func update(screen *ebiten.Image) error {
 
 	// Logical Operations to Setup Rendering
 
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && Has(mode, betEnable) {
+		x, y := ebiten.CursorPosition()
+		if x > 320 && x < 470 && y > 600 && y < 690 {
+			if !Has(mode, betValue) {
+				result = ""
+			}
+			mode = Set(mode, betValue) // Process various Bet Options
+			mode = Set(mode, betInput)
+		}
+	}
+	if Has(mode, betInput) {
+		txt, hasCR := TextInput(screen)
+		if len(txt) > 0 && !hasCR {
+			result += txt
+		}
+		if hasCR {
+			mode = Clear(mode, betValue)
+			mode = Clear(mode, betInput)
+		}
+	}
+
 	if Has(mode, cardDeal) {
 
 		if ebiten.IsDrawingSkipped() {
@@ -218,31 +239,9 @@ func update(screen *ebiten.Image) error {
 		deal(mode, screen)          // Deal Cards
 		mode = Set(mode, betEnable) // Enable Message Boxes
 
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && Has(mode, betEnable) {
-			x, y := ebiten.CursorPosition()
-			if x > 320 && x < 470 && y > 600 && y < 690 {
-				if !Has(mode, betValue) {
-					result = ""
-					fmt.Println("x ", x, "  y ", y)
-				}
-				mode = Set(mode, betValue) // Process various Bet Options
-				mode = Set(mode, betInput)
-			}
-		}
-		if Has(mode, betInput) {
-			txt, hasCR := TextInput(screen)
-			if len(txt) > 0 {
-				result += txt
-				fmt.Println("txt = ", txt, " result = ", result)
-				charDisplay(1, txt, 580, 745, screen)
-			}
-			if hasCR {
-				Clear(mode, betInput)
-				Clear(mode, betValue)
-			}
-		}
 		return nil
 	}
+	return nil
 }
 
 func instruct() {
@@ -289,8 +288,8 @@ func initTable(screen *ebiten.Image) {
 		charDisplay(aSmall, " BET", 360, 650, screen)
 
 		if Has(mode, betValue) {
-			charDisplay(aTiny, "Value: ", 500, 650, screen)
-			Set(mode, betInput)
+			charDisplay(aTiny, "Value: "+result, 500, 650, screen)
+			mode = Set(mode, betInput)
 		}
 	}
 }
