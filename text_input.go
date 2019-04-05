@@ -34,12 +34,5 @@ func TextInput(screen *ebiten.Image) (tx string, e bool) {
 		tx += "\n"
 		return tx, true
 	}
-
-	// If the backspace key is pressed, remove one character.
-	if repeatingKeyPressed(ebiten.KeyBackspace) {
-		if len(tx) >= 1 {
-			tx = tx[:len(tx)-1]
-		}
-	}
 	return tx, false
 }
