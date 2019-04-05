@@ -75,6 +75,8 @@ var cardTable = "images/table.png"
 
 var cardBack = "images/playing-cards-back.png"
 
+var counter = 0 // Blink Counter
+
 var deck = map[int]string{
 	1:  "images/10_of_clubs.png",
 	2:  "images/10_of_diamonds.png",
@@ -287,8 +289,15 @@ func initTable(screen *ebiten.Image) {
 		messageSquare(150, 90, 320, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
 		charDisplay(aSmall, " BET", 360, 650, screen)
 
+		t := ""
 		if Has(mode, betValue) {
-			charDisplay(aTiny, "Value: "+result, 500, 650, screen)
+			// Blink the cursor.
+			if counter%60 < 30 {
+				t = "_"
+			}
+			counter++
+			fmt.Println(t)
+			charDisplay(aTiny, "Value:"+result+t, 500, 650, screen)
 			mode = Set(mode, betInput)
 		}
 	}
