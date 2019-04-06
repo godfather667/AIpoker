@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/hajimehoshi/ebiten"
@@ -40,7 +39,6 @@ func inputUpdate(screen *ebiten.Image) (string, int) {
 
 	// If the enter key is pressed, add a line break.
 	if repeatingKeyPressed(ebiten.KeyEnter) || repeatingKeyPressed(ebiten.KeyKPEnter) {
-		//		inText += "\n"
 		ctrl = hasCR
 	}
 
@@ -65,15 +63,12 @@ func inputUpdate(screen *ebiten.Image) (string, int) {
 	case isNull:
 		if len(txt) > 0 {
 			inText += txt
-			fmt.Println("isNull(txt) = ", inText)
 			return inText, isNew
 		}
 		return inText, isNull
 	case isNew:
-		fmt.Println("isNew = ", inText)
 		return inText, isNew
 	case hasCR:
-		fmt.Println("hasCR = ", inText)
 		return inText, hasCR
 	default:
 		return "", isNull

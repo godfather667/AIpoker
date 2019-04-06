@@ -1,217 +1,18 @@
 //
-// Display Table
+// Main Poker Functions
 //
 package main
 
 import (
-	"fmt"
 	"image/color"
 	_ "image/png"
 	"log"
-	"math/rand"
-	"time"
-
-	"github.com/golang/freetype/truetype"
-	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
-	"golang.org/x/image/font"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
-	"github.com/hajimehoshi/ebiten/text"
 )
 
-type Bits uint8 // Bit Mask for mode
-
-const (
-	cardDeal = 1 << iota // Update Mask Encoding
-	cardFlop
-	cardTurn
-	cardRiver
-	betValue
-	betInput
-	betEnable
-	inputWait
-)
-
-const (
-	mPlus = iota // mplus fonts
-	mSmall
-	mTiny
-	aPlus // Arcade fonts
-	aSmall
-	aTiny
-)
-const (
-	unhide    = iota // Display Card Value
-	hide             // Hide Card Value (Show Card Back)
-	display          // Display card at position
-	undisplay        // Display Nothing
-)
-
-const (
-	hasCR  = 1 // Carriage Return Detected
-	isNew  = 2 // Represents and New Value
-	isNull = 3 // Nothing has Changed this Update
-
-	dec = 60 // Display Error Counnt
-)
-
-const (
-	screenWidth  = 1024
-	screenHeight = 768
-
-	dpi = 72
-)
-
-var displayError = 0         // Display Error Message Counter
-var displayErrorMessage = "" // Error Message to Present
-
-var mode Bits // Update Mask
-
-var result string // Value input value
-
-var mplusNormalFont font.Face // Font Variables
-var smallNormalFont font.Face
-var tinyNormalFont font.Face
-var arcadeFont font.Face
-var smallArcadeFont font.Face
-var tinyArcadeFont font.Face
-
-var table *ebiten.Image // Table Image
-var card *ebiten.Image  // Card Image
-
-var err error // Error
-
-var cardTable = "images/table.png"
-
-var cardBack = "images/playing-cards-back.png"
-
-var counter = 0 // Blink Counter
-
-var deck = map[int]string{
-	1:  "images/10_of_clubs.png",
-	2:  "images/10_of_diamonds.png",
-	3:  "images/10_of_hearts.png",
-	4:  "images/10_of_spades.png",
-	5:  "images/2_of_clubs.png",
-	6:  "images/2_of_diamonds.png",
-	7:  "images/2_of_hearts.png",
-	8:  "images/2_of_spades.png",
-	9:  "images/3_of_clubs.png",
-	10: "images/3_of_diamonds.png",
-	11: "images/3_of_hearts.png",
-	12: "images/3_of_spades.png",
-	13: "images/4_of_clubs.png",
-	14: "images/4_of_diamonds.png",
-	15: "images/4_of_hearts.png",
-	16: "images/4_of_spades.png",
-	17: "images/5_of_clubs.png",
-	18: "images/5_of_diamonds.png",
-	19: "images/5_of_hearts.png",
-	20: "images/5_of_spades.png",
-	21: "images/6_of_clubs.png",
-	22: "images/6_of_diamonds.png",
-	23: "images/6_of_hearts.png",
-	24: "images/6_of_spades.png",
-	25: "images/7_of_clubs.png",
-	26: "images/7_of_diamonds.png",
-	27: "images/7_of_hearts.png",
-	28: "images/7_of_spades.png",
-	29: "images/8_of_clubs.png",
-	30: "images/8_of_diamonds.png",
-	31: "images/8_of_hearts.png",
-
-	32: "images/8_of_spades.png",
-	33: "images/9_of_clubs.png",
-	34: "images/9_of_diamonds.png",
-	35: "images/9_of_hearts.png",
-	36: "images/9_of_spades.png",
-	37: "images/ace_of_clubs.png",
-	38: "images/ace_of_diamonds.png",
-	39: "images/ace_of_hearts.png",
-	40: "images/ace_of_spades.png",
-	41: "images/jack_of_clubs.png",
-	42: "images/jack_of_diamonds.png",
-	43: "images/jack_of_hearts.png",
-	44: "images/jack_of_spades.png",
-	45: "images/king_of_clubs.png",
-	46: "images/king_of_diamonds.png",
-	47: "images/king_of_hearts.png",
-	48: "images/king_of_spades.png",
-	49: "images/queen_of_clubs.png",
-	50: "images/queen_of_diamonds.png",
-	51: "images/queen_of_hearts.png",
-	52: "images/queen_of_spades.png",
-}
-
-func init() { // Initialize Normal Fonts
-
-	// Seup a new fonts for text display
-
-	// Initialize Normal Fonts
-
-	tt, err := truetype.Parse(fonts.MPlus1pRegular_ttf)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	mplusNormalFont = truetype.NewFace(tt, &truetype.Options{
-		Size:    24,
-		DPI:     dpi,
-		Hinting: font.HintingFull,
-	})
-
-	smallNormalFont = truetype.NewFace(tt, &truetype.Options{
-		Size:    18,
-		DPI:     dpi,
-		Hinting: font.HintingFull,
-	})
-
-	tinyNormalFont = truetype.NewFace(tt, &truetype.Options{
-		Size:    12,
-		DPI:     dpi,
-		Hinting: font.HintingFull,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Initialize Arcade Fonts
-
-	tt, err = truetype.Parse(fonts.ArcadeN_ttf)
-	if err != nil {
-		log.Fatal(err)
-	}
-	arcadeFont = truetype.NewFace(tt, &truetype.Options{
-		Size:    24,
-		DPI:     dpi,
-		Hinting: font.HintingFull,
-	})
-	smallArcadeFont = truetype.NewFace(tt, &truetype.Options{
-		Size:    18,
-		DPI:     dpi,
-		Hinting: font.HintingFull,
-	})
-	tinyArcadeFont = truetype.NewFace(tt, &truetype.Options{
-		Size:    12,
-		DPI:     dpi,
-		Hinting: font.HintingFull,
-	})
-
-	// Insure Good Random Number - Initialize Seed with Nano-second time value!
-	rand.Seed(time.Now().UnixNano())
-}
-
-// Bit Wise Functions
 //
-func set(b, flag Bits) Bits { return b | flag }
-
-func clear(b, flag Bits) Bits { return b &^ flag }
-
-func toggle(b, flag Bits) Bits { return b ^ flag }
-
-func has(b, flag Bits) bool { return b&flag != 0 }
-
 // Update called each Run Cycle
 //
 func update(screen *ebiten.Image) error {
@@ -229,9 +30,8 @@ func update(screen *ebiten.Image) error {
 		}
 	}
 	if has(mode, betInput) {
-		inTest, inputMode := inputUpdate(screen)
+		inText, inputMode := inputUpdate(screen)
 		if inputMode != isNull {
-			fmt.Println("result = ", inTest, "  inputMode = ", inputMode)
 			result = inText //Update Output Image
 		}
 
@@ -258,14 +58,6 @@ func update(screen *ebiten.Image) error {
 		return nil
 	}
 	return nil
-}
-
-func instruct() {
-	fmt.Println("\n                        A I  P O K E R")
-	fmt.Println("\nAIpoker is the initial concept design for an AI Based Poker Simulation")
-	fmt.Println("Only one 'bug' at the moment: You must put the cursor in the image box for")
-	fmt.Println("the entire image to be completely displayed.")
-	fmt.Println("\nThis 'Feature' also shows up in their example games. May take Big Think!")
 }
 
 // Initialize Poker Table Display
@@ -322,39 +114,6 @@ func initTable(screen *ebiten.Image) {
 	}
 }
 
-func shuffle() {
-	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
-
-	rand.Shuffle(52, func(i, j int) {
-		deck[i], deck[j] = deck[j], deck[i]
-	})
-}
-
-func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
-
-	// Create Card image
-	if d == undisplay {
-		return
-	}
-	if h == hide {
-		card, _, err = ebitenutil.NewImageFromFile(cardBack, ebiten.FilterDefault)
-		if err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		card, _, err = ebitenutil.NewImageFromFile(deck[cardValue], ebiten.FilterDefault)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	// Display Image
-	opts := &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(x, y)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(card, opts)
-}
-
 func deal(mode Bits, screen *ebiten.Image) {
 
 	if has(mode, cardDeal) {
@@ -400,57 +159,9 @@ func deal(mode Bits, screen *ebiten.Image) {
 	return
 }
 
-func charDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
-	// Add Text
-	switch font {
-	case 0:
-		text.Draw(screen, msg, mplusNormalFont, x, y, color.Black)
-	case 1:
-		text.Draw(screen, msg, smallNormalFont, x, y, color.Black)
-	case 2:
-		text.Draw(screen, msg, tinyNormalFont, x, y, color.Black)
-	case 3:
-		text.Draw(screen, msg, arcadeFont, x, y, color.Black)
-	case 4:
-		text.Draw(screen, msg, smallArcadeFont, x, y, color.Black)
-	case 5:
-		text.Draw(screen, msg, tinyArcadeFont, x, y, color.Black)
-	default:
-		fmt.Println("Bad Font Description!")
-	}
-}
-
-func messageError(screen *ebiten.Image) {
-	text.Draw(screen, displayErrorMessage, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
-}
-func setError(msg string, screen *ebiten.Image) {
-	displayError = dec // Display Error Delay Value
-	displayErrorMessage = msg
-	//text.Draw(screen, msg, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
-}
-
-func clearError(screen *ebiten.Image) {
-	displayError = 0
-	displayErrorMessage = ""
-	//	text.Draw(screen, "                         ", smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
-}
-
-func messageSquare(sx, sy int, px, py float64, colorCode color.NRGBA, screen *ebiten.Image) {
-
-	square, _ := ebiten.NewImage(sx, sy, ebiten.FilterNearest)
-	square.Fill(colorCode)
-
-	opts := &ebiten.DrawImageOptions{}
-	// Add the Translate effect to the option struct.
-	opts.GeoM.Translate(px, py)
-	// Draw the card image to the screen with an empty option
-	screen.DrawImage(square, opts)
-}
-
 func main() {
-	instruct() // Display current notes on project progress
-	shuffle()  // Shuffle Deck
 
+	shuffle()       // Shuffle Deck
 	mode = cardDeal // Clear Deal Mode
 
 	//
