@@ -9,7 +9,6 @@ import (
 	_ "image/png"
 	"log"
 	"math/rand"
-	"strconv"
 	"time"
 
 	"github.com/golang/freetype/truetype"
@@ -61,6 +60,9 @@ const (
 
 	dpi = 72
 )
+
+var displayError = 0
+var displayErrorMessage = ""
 
 var mode Bits // Update Mask
 
@@ -228,21 +230,11 @@ func update(screen *ebiten.Image) error {
 		inTest, inputMode := inputUpdate(screen)
 		if inputMode != isNull {
 			fmt.Println("result = ", inTest, "  inputMode = ", inputMode)
-			result = inText
-		}
-
-		if inputMode != isNull {
-			if inputMode == isNew || inputMode == hasCR {
-				if _, err := strconv.Atoi(inText); err != nil { // is txt a number?
-					fmt.Println("Bad Number!")
-					result = ""
-				}
-			}
+			result = inText //Update Output Image
 		}
 
 		if inputMode == hasCR {
-			//		fmt.Println("Result = ", result)
-			//	mode = Clear(mode, betValue)
+			// Finialize Result Number and Clear Input Flags
 			result = inText
 			mode = Clear(mode, betValue)
 			mode = Clear(mode, betInput)
@@ -314,6 +306,12 @@ func initTable(screen *ebiten.Image) {
 			// Blink the cursor.
 			if counter%60 < 30 {
 				t = "_"
+			}
+			if displayError > 0 {
+				messageError(screen)
+				displayError--
+			} else {
+				clearError(screen)
 			}
 			counter++
 			charDisplay(aTiny, "Value:"+result+t, 500, 650, screen)
@@ -416,12 +414,23 @@ func charDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 	case 5:
 		text.Draw(screen, msg, tinyArcadeFont, x, y, color.Black)
 	default:
-		messageError("Text Error: Unknown Font Code", screen)
+		fmt.Println("Bad Font Description!")
 	}
 }
 
-func messageError(msg string, screen *ebiten.Image) {
-	text.Draw(screen, msg, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
+func messageError(screen *ebiten.Image) {
+	text.Draw(screen, displayErrorMessage, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
+}
+func setError(msg string, screen *ebiten.Image) {
+	displayError = 60
+	displayErrorMessage = msg
+	//text.Draw(screen, msg, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
+}
+
+func clearError(screen *ebiten.Image) {
+	displayError = 0
+	displayErrorMessage = ""
+	//	text.Draw(screen, "                         ", smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
 }
 
 func messageSquare(sx, sy int, px, py float64, colorCode color.NRGBA, screen *ebiten.Image) {

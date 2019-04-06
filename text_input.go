@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
@@ -49,6 +50,15 @@ func inputUpdate(screen *ebiten.Image) (string, int) {
 			inText = inText[:len(inText)-1]
 		}
 		ctrl = isNew
+	}
+
+	// Insure that input characters are digits
+	if len(txt) > 0 {
+		if _, err := strconv.Atoi(txt); err != nil { // is txt a number?
+			setError("Text Error - Bad Number", screen)
+			inText = ""
+			return inText, isNew
+		}
 	}
 
 	switch ctrl {
