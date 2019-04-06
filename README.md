@@ -7,8 +7,14 @@ The user will be able to select a variety of AI players of different skills leve
 
 It also serves as a test bed for the **github.com/hajimehoshi/ebiten** Display Package.
 
-* Currently it displays a table with two players one where users cards both showing and one with both cards hidden.
-* A sample **flop** is also displayed.
+* It displays a table with with a user and nine players.
+* Currently, only the users cards are shown - The others only the card backs.
 * The 'images' directory contains all the cards and other necessary images.
+* At this time the check/fold/bet "Buttons" are displayed, only bet works.
 * There is a BUG in that *the cursor must be in the initial display box* for the complete image to be displayed. 
 * This BUG is also in the example games I have compiled. The fix is on my TODO List.
+
+The files were refactored into **AIpoker.go, data.go, functions.go and text_input.go**
+
+The next work will be setting up the functions to handle each AI player and the utility functions
+for displaying chips and buttons and performing other display functions.
