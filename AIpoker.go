@@ -9,6 +9,7 @@ import (
 	_ "image/png"
 	"log"
 	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/golang/freetype/truetype"
@@ -46,6 +47,12 @@ const (
 	hide             // Hide Card Value (Show Card Back)
 	display          // Display card at position
 	undisplay        // Display Nothing
+)
+
+const (
+	hasCR  = 1 // Carriage Return Detected
+	isNew  = 2 // Represents and New Value
+	isNull = 3 // Nothing has Changed this Update
 )
 
 const (
@@ -189,7 +196,6 @@ func init() { // Initialize Normal Fonts
 
 	// Insure Good Random Number - Initialize Seed with Nano-second time value!
 	rand.Seed(time.Now().UnixNano())
-
 }
 
 // Bit Wise Functions
@@ -219,11 +225,25 @@ func update(screen *ebiten.Image) error {
 		}
 	}
 	if Has(mode, betInput) {
-		txt, hasCR := TextInput(screen)
-		if len(txt) > 0 && !hasCR {
-			result += txt
+		inTest, inputMode := inputUpdate(screen)
+		if inputMode != isNull {
+			fmt.Println("result = ", inTest, "  inputMode = ", inputMode)
+			result = inText
 		}
-		if hasCR {
+
+		if inputMode != isNull {
+			if inputMode == isNew || inputMode == hasCR {
+				if _, err := strconv.Atoi(inText); err != nil { // is txt a number?
+					fmt.Println("Bad Number!")
+					result = ""
+				}
+			}
+		}
+
+		if inputMode == hasCR {
+			//		fmt.Println("Result = ", result)
+			//	mode = Clear(mode, betValue)
+			result = inText
 			mode = Clear(mode, betValue)
 			mode = Clear(mode, betInput)
 		}
@@ -296,7 +316,6 @@ func initTable(screen *ebiten.Image) {
 				t = "_"
 			}
 			counter++
-			fmt.Println(t)
 			charDisplay(aTiny, "Value:"+result+t, 500, 650, screen)
 			mode = Set(mode, betInput)
 		}
