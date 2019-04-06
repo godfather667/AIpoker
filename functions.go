@@ -20,7 +20,10 @@ import (
 	"github.com/hajimehoshi/ebiten/text"
 )
 
-func init() { // Initialize Normal Fonts
+//
+// Initialize Normal Fonts
+//
+func init() {
 
 	// Seup a new fonts for text display
 
@@ -78,7 +81,10 @@ func init() { // Initialize Normal Fonts
 	rand.Seed(time.Now().UnixNano())
 }
 
-// Bit Wise Functions
+//
+// Bit Wise Functions - The "mode" value is used to control Deal Operationsns.
+//   Set, Clear, Toggle Mode Bits
+//   Toggle Bit is also available
 //
 func set(b, flag Bits) Bits { return b | flag }
 
@@ -88,15 +94,40 @@ func toggle(b, flag Bits) Bits { return b ^ flag }
 
 func has(b, flag Bits) bool { return b&flag != 0 }
 
+//
+// Shuffle Cards Function
+//   Due to a tendency of cards at the first/end locations
+//   to stay thru a number of shuffles - The cards at the locations
+//   first(1) and end(52) are swapped with random middle position.
+//
 func shuffle() {
+	// Three Shuffles for each new hand!
 	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
+	deck[1], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[1]
+
+	rand.Shuffle(52, func(i, j int) {
+		deck[i], deck[j] = deck[j], deck[i]
+	})
+	// Shuffle Two
+	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
+	deck[1], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[1]
+
+	rand.Shuffle(52, func(i, j int) {
+		deck[i], deck[j] = deck[j], deck[i]
+	})
+	// Shuffle Three
+	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
+	deck[1], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[1]
 
 	rand.Shuffle(52, func(i, j int) {
 		deck[i], deck[j] = deck[j], deck[i]
 	})
 }
 
-func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
+//
+// Display Individual Images
+//
+func imageDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 
 	// Create Card image
 	if d == undisplay {
@@ -121,6 +152,9 @@ func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 	screen.DrawImage(card, opts)
 }
 
+//
+// Display Character Message in one of six(6) fonts/sizes
+//
 func charDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 	// Add Text
 	switch font {
@@ -141,19 +175,29 @@ func charDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 	}
 }
 
+//
+// Error Message Functions
+//   The error message is display at the bottom of the screen in red letter
+//
 func messageError(screen *ebiten.Image) {
 	text.Draw(screen, displayErrorMessage, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
 }
+
+// Set Error Message loads message buffer with message and sets download counter dec constant
 func setError(msg string, screen *ebiten.Image) {
 	displayError = dec // Display Error Delay Value
 	displayErrorMessage = msg
 }
 
+// Clear Error Message and download counter
 func clearError(screen *ebiten.Image) {
 	displayError = 0
 	displayErrorMessage = ""
 }
 
+//
+// Display the individual message squares (ie Large buttons)
+//
 func messageSquare(sx, sy int, px, py float64, colorCode color.NRGBA, screen *ebiten.Image) {
 
 	square, _ := ebiten.NewImage(sx, sy, ebiten.FilterNearest)

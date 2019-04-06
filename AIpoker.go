@@ -1,5 +1,5 @@
 //
-// Main Poker Functions
+// Executive Poker Functions
 //
 package main
 
@@ -60,8 +60,8 @@ func update(screen *ebiten.Image) error {
 	return nil
 }
 
-// Initialize Poker Table Display
-
+// Init Table Display
+// Sets up the Fixed Table Images
 func initTable(screen *ebiten.Image) {
 
 	// Fill the Screen with the white color
@@ -85,6 +85,8 @@ func initTable(screen *ebiten.Image) {
 	// Draw the table image to the screen with an empty option
 	screen.DrawImage(table, opts)
 
+	// If the user has a bet/fold/check decision - Setup up the Buttons.
+
 	if has(mode, betEnable) {
 		messageSquare(150, 90, 20, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
 		charDisplay(aSmall, "CHECK", 40, 650, screen)
@@ -101,6 +103,7 @@ func initTable(screen *ebiten.Image) {
 			if counter%60 < 30 {
 				t = "_"
 			}
+			// Error Message Control
 			if displayError > 0 {
 				messageError(screen)
 				displayError--
@@ -114,51 +117,61 @@ func initTable(screen *ebiten.Image) {
 	}
 }
 
+//
+// Deal Cards Mode
+//   The actual cards dealt depend mode bits
+//
 func deal(mode Bits, screen *ebiten.Image) {
 
 	if has(mode, cardDeal) {
-		cardDisplay(0, 250, 1, hide, display, screen)
-		cardDisplay(70, 80, 2, hide, display, screen)
-		cardDisplay(378, 20, 3, hide, display, screen)
-		cardDisplay(560, 20, 4, hide, display, screen)
-		cardDisplay(800, 80, 5, hide, display, screen)
-		cardDisplay(850, 250, 6, hide, display, screen)
-		cardDisplay(70, 440, 7, hide, display, screen)
-		cardDisplay(800, 440, 8, hide, display, screen)
-		cardDisplay(420, 460, 9, unhide, display, screen)
+		imageDisplay(0, 250, 1, hide, display, screen)
+		imageDisplay(70, 80, 2, hide, display, screen)
+		imageDisplay(378, 20, 3, hide, display, screen)
+		imageDisplay(560, 20, 4, hide, display, screen)
+		imageDisplay(800, 80, 5, hide, display, screen)
+		imageDisplay(850, 250, 6, hide, display, screen)
+		imageDisplay(70, 440, 7, hide, display, screen)
+		imageDisplay(800, 440, 8, hide, display, screen)
+		imageDisplay(420, 460, 9, unhide, display, screen)
 
-		cardDisplay(64, 250, 10, hide, display, screen)
-		cardDisplay(134, 80, 11, hide, display, screen)
-		cardDisplay(314, 20, 12, hide, display, screen)
-		cardDisplay(624, 20, 13, hide, display, screen)
-		cardDisplay(864, 80, 14, hide, display, screen)
-		cardDisplay(914, 250, 15, hide, display, screen)
-		cardDisplay(134, 440, 16, hide, display, screen)
-		cardDisplay(864, 440, 17, hide, display, screen)
-		cardDisplay(484, 460, 18, unhide, display, screen)
+		imageDisplay(64, 250, 10, hide, display, screen)
+		imageDisplay(134, 80, 11, hide, display, screen)
+		imageDisplay(314, 20, 12, hide, display, screen)
+		imageDisplay(624, 20, 13, hide, display, screen)
+		imageDisplay(864, 80, 14, hide, display, screen)
+		imageDisplay(914, 250, 15, hide, display, screen)
+		imageDisplay(134, 440, 16, hide, display, screen)
+		imageDisplay(864, 440, 17, hide, display, screen)
+		imageDisplay(484, 460, 18, unhide, display, screen)
 		return
 	}
 
 	if (mode & cardFlop) != 0 { // Burn Card = 20
-		cardDisplay(319, 250, 21, hide, undisplay, screen)
-		cardDisplay(393, 250, 22, hide, undisplay, screen)
-		cardDisplay(467, 250, 23, hide, undisplay, screen)
+		imageDisplay(319, 250, 21, hide, undisplay, screen)
+		imageDisplay(393, 250, 22, hide, undisplay, screen)
+		imageDisplay(467, 250, 23, hide, undisplay, screen)
 		return
 	}
 
 	if (mode & cardTurn) != 0 { // Burn Card = 24
-		cardDisplay(541, 250, 25, hide, undisplay, screen)
+		imageDisplay(541, 250, 25, hide, undisplay, screen)
 		return
 	}
 
 	if (mode & cardRiver) != 0 { // Burn Card = 26
-		cardDisplay(615, 250, 27, hide, undisplay, screen)
+		imageDisplay(615, 250, 27, hide, undisplay, screen)
 		return
 	}
 
 	return
 }
 
+//
+// Primary Executive Function
+//   performs the initial shuffle and sets Deal Mode
+//   Then calls the "RUN" Loop -- Returns only on error or termination.
+//   All further action takes place in the specified "update" Function
+//
 func main() {
 
 	shuffle()       // Shuffle Deck

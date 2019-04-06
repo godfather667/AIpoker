@@ -1,3 +1,6 @@
+// text_input.go
+// Performs the input functions for display packagge
+//
 package main
 
 import (
@@ -7,12 +10,9 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
-var (
-	inText = ""
-	ctrl   = 0
-)
-
+//
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
+//
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
 		delay    = 30
@@ -30,6 +30,9 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 	return false
 }
 
+//
+// Text Update Function
+//
 func inputUpdate(screen *ebiten.Image) (string, int) {
 	// Add a string from InputChars, that returns string input by users.
 	// Note that InputChars result changes every frame, so you need to call this
@@ -58,7 +61,9 @@ func inputUpdate(screen *ebiten.Image) (string, int) {
 			return inText, isNew
 		}
 	}
-
+	//
+	// Handle Resulting Control Mode Bit Actions
+	//
 	switch ctrl {
 	case isNull:
 		if len(txt) > 0 {

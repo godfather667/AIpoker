@@ -1,5 +1,5 @@
 //
-// Data Values
+// Data Values - Constants, variables, types
 //
 package main
 
@@ -75,6 +75,11 @@ var cardTable = "images/table.png"
 var cardBack = "images/playing-cards-back.png"
 
 var counter = 0 // Blink Counter
+
+var (
+	inText = ""
+	ctrl   = 0
+)
 
 var chip = map[int]string{
 	1: "images/dealer_chip.png",
