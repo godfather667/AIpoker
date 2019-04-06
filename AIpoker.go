@@ -52,6 +52,8 @@ const (
 	hasCR  = 1 // Carriage Return Detected
 	isNew  = 2 // Represents and New Value
 	isNull = 3 // Nothing has Changed this Update
+
+	dec = 60 // Display Error Counnt
 )
 
 const (
@@ -61,8 +63,8 @@ const (
 	dpi = 72
 )
 
-var displayError = 0
-var displayErrorMessage = ""
+var displayError = 0         // Display Error Message Counter
+var displayErrorMessage = "" // Error Message to Present
 
 var mode Bits // Update Mask
 
@@ -202,13 +204,13 @@ func init() { // Initialize Normal Fonts
 
 // Bit Wise Functions
 //
-func Set(b, flag Bits) Bits { return b | flag }
+func set(b, flag Bits) Bits { return b | flag }
 
-func Clear(b, flag Bits) Bits { return b &^ flag }
+func clear(b, flag Bits) Bits { return b &^ flag }
 
-func Toggle(b, flag Bits) Bits { return b ^ flag }
+func toggle(b, flag Bits) Bits { return b ^ flag }
 
-func Has(b, flag Bits) bool { return b&flag != 0 }
+func has(b, flag Bits) bool { return b&flag != 0 }
 
 // Update called each Run Cycle
 //
@@ -216,17 +218,17 @@ func update(screen *ebiten.Image) error {
 
 	// Logical Operations to Setup Rendering
 
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && Has(mode, betEnable) {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && has(mode, betEnable) {
 		x, y := ebiten.CursorPosition()
 		if x > 320 && x < 470 && y > 600 && y < 690 {
-			if !Has(mode, betValue) {
+			if !has(mode, betValue) {
 				result = ""
 			}
-			mode = Set(mode, betValue) // Process various Bet Options
-			mode = Set(mode, betInput)
+			mode = set(mode, betValue) // Process various Bet Options
+			mode = set(mode, betInput)
 		}
 	}
-	if Has(mode, betInput) {
+	if has(mode, betInput) {
 		inTest, inputMode := inputUpdate(screen)
 		if inputMode != isNull {
 			fmt.Println("result = ", inTest, "  inputMode = ", inputMode)
@@ -236,12 +238,12 @@ func update(screen *ebiten.Image) error {
 		if inputMode == hasCR {
 			// Finialize Result Number and Clear Input Flags
 			result = inText
-			mode = Clear(mode, betValue)
-			mode = Clear(mode, betInput)
+			mode = clear(mode, betValue)
+			mode = clear(mode, betInput)
 		}
 	}
 
-	if Has(mode, cardDeal) {
+	if has(mode, cardDeal) {
 
 		if ebiten.IsDrawingSkipped() {
 			// When the game is running slowly, the rendering data
@@ -251,7 +253,7 @@ func update(screen *ebiten.Image) error {
 		initTable(screen)
 
 		deal(mode, screen)          // Deal Cards
-		mode = Set(mode, betEnable) // Enable Message Boxes
+		mode = set(mode, betEnable) // Enable Message Boxes
 
 		return nil
 	}
@@ -291,7 +293,7 @@ func initTable(screen *ebiten.Image) {
 	// Draw the table image to the screen with an empty option
 	screen.DrawImage(table, opts)
 
-	if Has(mode, betEnable) {
+	if has(mode, betEnable) {
 		messageSquare(150, 90, 20, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
 		charDisplay(aSmall, "CHECK", 40, 650, screen)
 
@@ -302,7 +304,7 @@ func initTable(screen *ebiten.Image) {
 		charDisplay(aSmall, " BET", 360, 650, screen)
 
 		t := ""
-		if Has(mode, betValue) {
+		if has(mode, betValue) {
 			// Blink the cursor.
 			if counter%60 < 30 {
 				t = "_"
@@ -315,7 +317,7 @@ func initTable(screen *ebiten.Image) {
 			}
 			counter++
 			charDisplay(aTiny, "Value:"+result+t, 500, 650, screen)
-			mode = Set(mode, betInput)
+			mode = set(mode, betInput)
 		}
 	}
 }
@@ -355,7 +357,7 @@ func cardDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 
 func deal(mode Bits, screen *ebiten.Image) {
 
-	if Has(mode, cardDeal) {
+	if has(mode, cardDeal) {
 		cardDisplay(0, 250, 1, hide, display, screen)
 		cardDisplay(70, 80, 2, hide, display, screen)
 		cardDisplay(378, 20, 3, hide, display, screen)
@@ -422,7 +424,7 @@ func messageError(screen *ebiten.Image) {
 	text.Draw(screen, displayErrorMessage, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
 }
 func setError(msg string, screen *ebiten.Image) {
-	displayError = 60
+	displayError = dec // Display Error Delay Value
 	displayErrorMessage = msg
 	//text.Draw(screen, msg, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
 }
