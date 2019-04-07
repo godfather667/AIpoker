@@ -1,5 +1,4 @@
-// text_input.go
-// Performs the input functions for display packagge
+// text_input.go performs the character input functions for AIpoker.
 //
 package main
 
@@ -10,9 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
-//
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
-//
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
 		delay    = 30
@@ -30,9 +27,7 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 	return false
 }
 
-//
-// Text Update Function
-//
+// inputUpdate reads characters entered on the default screen.
 func inputUpdate(screen *ebiten.Image) (string, int) {
 	// Add a string from InputChars, that returns string input by users.
 	// Note that InputChars result changes every frame, so you need to call this

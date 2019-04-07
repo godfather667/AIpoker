@@ -1,6 +1,4 @@
-//
-// Data Values - Constants, variables, types
-//
+// data.go contains all the Constants, variables, types used in AIpoker.
 package main
 
 import (
@@ -8,10 +6,12 @@ import (
 	"golang.org/x/image/font"
 )
 
-type Bits uint8 // Bit Mask for mode
+// Bit Mask type for the "mode" word.
+type Bits uint8
 
+// Bit Mask Defitions for the "mode" word.
 const (
-	cardDeal = 1 << iota // Update Mask Encoding
+	cardDeal = 1 << iota
 	cardFlop
 	cardTurn
 	cardRiver
@@ -21,6 +21,7 @@ const (
 	inputWait
 )
 
+// Define the font selector values.
 const (
 	mPlus = iota // mplus fonts
 	mSmall
@@ -29,6 +30,8 @@ const (
 	aSmall
 	aTiny
 )
+
+// The card display control bits.
 const (
 	unhide    = iota // Display Card Value
 	hide             // Hide Card Value (Show Card Back)
@@ -36,14 +39,16 @@ const (
 	undisplay        // Display Nothing
 )
 
+// Input control flags for the text_input functions.
 const (
-	hasCR  = 1 // Carriage Retustackrn Detected
+	hasCR  = 1 // Carriage Return Detected
 	isNew  = 2 // Represents and New Value
 	isNull = 3 // Nothing has Changed this Update
 
 	dec = 60 // Display Error Counnt
 )
 
+// Primary Display Parameters.
 const (
 	screenWidth  = 1024
 	screenHeight = 768
@@ -51,6 +56,7 @@ const (
 	dpi = 72
 )
 
+// All Global Variables used bu AIpoker.
 var displayError = 0         // Display Error Message Counter
 var displayErrorMessage = "" // Error Message to Present
 
