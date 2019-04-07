@@ -119,7 +119,6 @@ var deck = map[int]string{
 	29: "images/8_of_clubs.png",
 	30: "images/8_of_diamonds.png",
 	31: "images/8_of_hearts.png",
-
 	32: "images/8_of_spades.png",
 	33: "images/9_of_clubs.png",
 	34: "images/9_of_diamonds.png",
@@ -141,4 +140,17 @@ var deck = map[int]string{
 	50: "images/queen_of_diamonds.png",
 	51: "images/queen_of_hearts.png",
 	52: "images/queen_of_spades.png",
+}
+
+// Card postions for each player
+var players = []int{
+	0, 250, 64, 250, // AI Player 1
+	70, 80, 134, 80,
+	378, 20, 314, 20,
+	560, 20, 624, 20,
+	800, 80, 864, 80,
+	850, 250, 914, 250,
+	70, 440, 134, 440,
+	800, 440, 864, 440, // AI Player 8
+	420, 460, 484, 460, // Human Player
 }
