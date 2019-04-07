@@ -120,6 +120,18 @@ func dealCards(mode Bits, screen *ebiten.Image) {
 	return
 }
 
+// changeCard function that changes the hide/display parameters
+// of a particular card. Primarily to show a card front on screen.
+func changeCard(player, hide, display int, screen *ebiten.Image) {
+	postIndex := player * 6 // Compute position of player parameters
+
+	// Change players card positions
+	imageDisplay(float64(players[postIndex]), float64(players[postIndex+1]),
+		players[postIndex+4], unhide, display, screen)
+	imageDisplay(float64(players[postIndex+2]), float64(players[postIndex+3]),
+		players[postIndex+5], unhide, display, screen)
+}
+
 // Mode Bit Functions - The "mode" value is used to control Deal Operationns,
 //   Set, Clear, Toggle Mode Bits modify the "mode" word.
 //   Has tests the state a particular bit in the "mode" word.

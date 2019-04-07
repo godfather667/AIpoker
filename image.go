@@ -81,12 +81,12 @@ func imageDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 	if h == hide {
 		card, _, err = ebitenutil.NewImageFromFile(cardBack, ebiten.FilterDefault)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(cardBack, err)
 		}
 	} else {
 		card, _, err = ebitenutil.NewImageFromFile(deck[cardValue], ebiten.FilterDefault)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(deck[cardValue], err)
 		}
 	}
 	// Display Image
