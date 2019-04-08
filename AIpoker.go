@@ -8,6 +8,7 @@ package main
 import (
 	_ "image/png"
 	"log"
+	"strconv"
 
 	"github.com/hajimehoshi/ebiten"
 )
@@ -51,9 +52,23 @@ func update(screen *ebiten.Image) error {
 		if inputMode == hasCR {
 			// Finialize Result Number and Clear Input Flags
 			result = inText
+			if betAmount, err = strconv.ParseFloat(result, 64); err != nil {
+				setError("Text Error - Bad Number", screen)
+				inText = ""
+				return err
+			}
+
 			mode = clear(mode, betValue)
 			mode = clear(mode, betInput)
+			mode = clear(mode, betEnable)
+			mode = set(mode, betMade)
+			mode = set(mode, aiProcess)
 		}
+	}
+
+	// After User Action - Run the AI Processing
+	if has(mode, aiProcess) {
+		aiExec(betAmount)
 	}
 
 	if has(mode, cardDeal) {

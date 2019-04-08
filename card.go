@@ -130,7 +130,6 @@ func dealCards(mode Bits, screen *ebiten.Image) {
 // of a particular card. Primarily to show a card front on screen.
 func changeCard(player, hide, display int, screen *ebiten.Image) {
 	postIndex := player * 6 // Compute position of player parameters
-
 	// Change players card positions
 	imageDisplay(float64(players[postIndex]), float64(players[postIndex+1]),
 		players[postIndex+4], unhide, display, screen)

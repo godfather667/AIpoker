@@ -20,6 +20,10 @@ const (
 	betEnable
 	inputWait
 	waitDeal
+	aiProcess
+	betMade
+	foldMade
+	checkMade
 )
 
 // Define the font selector values.
@@ -84,8 +88,9 @@ var cardBack = "images/playing-cards-back.png"
 var counter = 0 // Blink Counter
 
 var (
-	inText = ""
-	ctrl   = 0
+	inText    = ""
+	ctrl      = 0
+	betAmount float64
 )
 
 var chip = map[int]string{
