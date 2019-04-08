@@ -166,3 +166,19 @@ var players = []int{
 	800, 440, 864, 440, 8, 17, // AI Player 8
 	420, 460, 484, 460, 9, 18, // Human Player
 }
+
+// Bits to String Conversion Map
+var dmap = map[Bits]string{
+	cardDeal:  "cardDeal",
+	cardFlop:  "cardFlop",
+	cardTurn:  "cardTurn",
+	cardRiver: "cardRive",
+	betValue:  "betValue",
+	betInput:  "betInput",
+	inputWait: "inputWait",
+	waitDeal:  "waitDeal",
+	aiProcess: "aiProcess",
+	betMade:   "betMade",
+	foldMade:  "foldMade",
+	checkMade: "checkMade",
+}
