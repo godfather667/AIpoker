@@ -7,7 +7,7 @@ import (
 )
 
 // Bit Mask type for the "mode" word.
-type Bits uint8
+type Bits uint16
 
 // Bit Mask Defitions for the "mode" word.
 const (
@@ -19,6 +19,7 @@ const (
 	betInput
 	betEnable
 	inputWait
+	waitDeal
 )
 
 // Define the font selector values.

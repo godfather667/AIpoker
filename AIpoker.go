@@ -16,11 +16,25 @@ import (
 // of the program. It is called every time the "run" loop completes a cycle.
 func update(screen *ebiten.Image) error {
 
+	createTable(screen)
+
+	if has(mode, cardDeal) {
+		dealCards(mode, screen) // Deal Cards
+	}
+
 	// Logical Operations to Setup Rendering
+
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && has(mode, waitDeal) {
+		x, y := ebiten.CursorPosition()
+		if x > 10 && x < 160 && y > 600 && y < 690 {
+			mode = set(mode, cardDeal)   // Process various Bet Options
+			mode = clear(mode, waitDeal) // Deal and remove Deal Button
+		}
+	}
 
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && has(mode, betEnable) {
 		x, y := ebiten.CursorPosition()
-		if x > 320 && x < 470 && y > 600 && y < 690 {
+		if x > 450 && x < 600 && y > 600 && y < 690 {
 			if !has(mode, betValue) {
 				result = ""
 			}
@@ -49,9 +63,6 @@ func update(screen *ebiten.Image) error {
 			// will not be adopted.
 			return nil
 		}
-		createTable(screen)
-
-		dealCards(mode, screen)     // Deal Cards
 		mode = set(mode, betEnable) // Enable Message Boxes
 
 		return nil
@@ -68,7 +79,7 @@ func update(screen *ebiten.Image) error {
 func main() {
 
 	shuffle()       // Shuffle Deck
-	mode = cardDeal // Clear Deal Mode
+	mode = waitDeal // Wait for user to select Deal!
 
 	//
 	// Run Loop

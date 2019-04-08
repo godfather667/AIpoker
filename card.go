@@ -41,17 +41,23 @@ func createTable(screen *ebiten.Image) {
 	// Draw the table image to the screen with an empty option
 	screen.DrawImage(table, opts)
 
+	// if waiting for Deal
+	if has(mode, waitDeal) {
+		messageSquare(150, 90, 10, 600, color.NRGBA{0x50, 0x50, 0xff, 0xff}, screen)
+		messageDisplay(aSmall, "DEAL", 40, 650, screen)
+	}
+
 	// If the user has a bet/fold/check decision - Setup up the Buttons.
-
 	if has(mode, betEnable) {
-		messageSquare(150, 90, 20, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
-		messageDisplay(aSmall, "CHECK", 40, 650, screen)
 
-		messageSquare(150, 90, 170, 600, color.NRGBA{0xff, 0x00, 0x00, 0xff}, screen)
-		messageDisplay(aSmall, "FOLD", 210, 650, screen)
+		messageSquare(150, 90, 150, 600, color.NRGBA{0xff, 0xff, 0x00, 0xff}, screen)
+		messageDisplay(aSmall, "CHECK", 180, 650, screen)
 
-		messageSquare(150, 90, 320, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
-		messageDisplay(aSmall, " BET", 360, 650, screen)
+		messageSquare(150, 90, 300, 600, color.NRGBA{0xff, 0x00, 0x00, 0xff}, screen)
+		messageDisplay(aSmall, "FOLD", 340, 650, screen)
+
+		messageSquare(150, 90, 450, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
+		messageDisplay(aSmall, "BET", 490, 650, screen)
 
 		t := ""
 		if has(mode, betValue) {
@@ -67,7 +73,7 @@ func createTable(screen *ebiten.Image) {
 				clearError(screen)
 			}
 			counter++
-			messageDisplay(aTiny, "Value:"+result+t, 500, 650, screen)
+			messageDisplay(aTiny, "Value:"+result+t, 620, 650, screen)
 			mode = set(mode, betInput)
 		}
 	}
