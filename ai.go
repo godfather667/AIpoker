@@ -2,12 +2,10 @@
 package main
 
 import (
-	"fmt"
 	_ "image/png"
 )
 
-func aiExec(betAmount float64) {
-	fmt.Println("AI Exec - Bet = ", betAmount)
+func aiExec(betAmount int) {
 
 	return
 }

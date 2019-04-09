@@ -6,6 +6,7 @@
 package main
 
 import (
+	"fmt"
 	_ "image/png"
 	"log"
 	"strconv"
@@ -52,12 +53,18 @@ func update(screen *ebiten.Image) error {
 		if inputMode == hasCR {
 			// Finialize Result Number and Clear Input Flags
 			result = inText
-			if betAmount, err = strconv.ParseFloat(result, 64); err != nil {
-				setError("Text Error - Bad Number", screen)
+			if betAmount, err = strconv.Atoi(result); err != nil {
+				setError("Numeric Error - Bad Number", screen)
 				inText = ""
-				return err
+				return nil
 			}
-
+			fmt.Println("BetAmount = ", betAmount)
+			/*			if betAmount == 0 {
+							setError("Bet of Zero Dollars not valid!", screen)
+							inText = ""
+							return nil
+						}
+			*/
 			mode = clear(mode, betValue)
 			mode = clear(mode, betInput)
 			mode = clear(mode, betEnable)

@@ -90,7 +90,7 @@ var counter = 0 // Blink Counter
 var (
 	inText    = ""
 	ctrl      = 0
-	betAmount float64
+	betAmount int
 )
 
 var chip = map[int]string{

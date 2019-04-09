@@ -50,10 +50,16 @@ func inputUpdate(screen *ebiten.Image) (string, int) {
 
 	// Insure that input characters are digits
 	if len(txt) > 0 {
-		if _, err := strconv.Atoi(txt); err != nil { // is txt a number?
-			setError("Text Error - Bad Number", screen)
+		if ba, err := strconv.Atoi(txt); err != nil { // is txt a number?
+			setError("Numeric Error - Bad Number", screen)
 			inText = ""
 			return inText, isNew
+		} else {
+			if ba == 0 {
+				setError("Bet of Zero Dollars not valid!", screen)
+				inText = ""
+				return inText, isNew
+			}
 		}
 	}
 	//
