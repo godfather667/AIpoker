@@ -67,6 +67,8 @@ var displayErrorMessage = "" // Error Message to Present
 
 var mode Bits // Update Mask
 
+var dealPost = 0 // Deal Position
+
 var result string // Value input value
 
 var mplusNormalFont font.Face // Font Variables
@@ -152,12 +154,49 @@ var deck = map[int]string{
 	50: "images/queen_of_diamonds.png",
 	51: "images/queen_of_hearts.png",
 	52: "images/queen_of_spades.png",
+	53: "images/red_chip.png",
+	54: "images/stack.png",
+	55: "images/table.png",
+	56: "images/white_deal_chip.png",
 }
 
 // Card postions for each player
+// The Player Position Table is duplicated so that starting at at any point
+// will allow nine positions to be dealt.
 var players = []int{
-	70, 440, 134, 440, 7, 16,
-	0, 250, 64, 250, 1, 10, // AI Player 1
+	70, 440, 134, 440, 7, 210, 390, hide, display,
+	0, 250, 64, 250, 1, 160, 260, hide, display,
+	70, 80, 134, 80, 2, 210, 160, hide, display,
+	378, 20, 314, 20, 3, 360, 160, hide, display,
+	560, 20, 624, 20, 4, 590, 160, hide, display,
+	800, 80, 864, 80, 5, 750, 180, hide, display,
+	850, 250, 914, 250, 6, 750, 270, hide, display,
+	800, 440, 864, 440, 8, 730, 390, hide, display,
+	420, 460, 484, 460, 9, 460, 400, unhide, display,
+	70, 440, 134, 440, 7, 210, 420, hide, display,
+	0, 250, 64, 250, 1, 210, 420, hide, display,
+	70, 80, 134, 80, 2, 210, 420, hide, display,
+	378, 20, 314, 20, 3, 210, 420, hide, display,
+	560, 20, 624, 20, 4, 210, 420, hide, display,
+	800, 80, 864, 80, 5, 210, 420, hide, display,
+	850, 250, 914, 250, 6, 210, 420, hide, display,
+	800, 440, 864, 440, 8, 210, 420, hide, display,
+	420, 460, 484, 460, 9, 210, 420, unhide, display,
+}
+
+/*
+var players = []int{
+	70, 440, 134, 440, 7, 16, // AI Player 1
+	0, 250, 64, 250, 1, 10,
+	70, 80, 134, 80, 2, 11,
+	378, 20, 314, 20, 3, 12,
+	560, 20, 624, 20, 4, 13,
+	800, 80, 864, 80, 5, 14,
+	850, 250, 914, 250, 6, 15,
+	800, 440, 864, 440, 8, 17, // AI Player 8
+	420, 460, 484, 460, 9, 18, // Human Player
+	70, 440, 134, 440, 7, 16, // AI Player 1
+	0, 250, 64, 250, 1, 10,
 	70, 80, 134, 80, 2, 11,
 	378, 20, 314, 20, 3, 12,
 	560, 20, 624, 20, 4, 13,
@@ -166,6 +205,7 @@ var players = []int{
 	800, 440, 864, 440, 8, 17, // AI Player 8
 	420, 460, 484, 460, 9, 18, // Human Player
 }
+*/
 
 // Bits to String Conversion Map
 var dmap = map[Bits]string{

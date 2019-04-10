@@ -6,7 +6,6 @@
 package main
 
 import (
-	"fmt"
 	_ "image/png"
 	"log"
 	"strconv"
@@ -58,13 +57,7 @@ func update(screen *ebiten.Image) error {
 				inText = ""
 				return nil
 			}
-			fmt.Println("BetAmount = ", betAmount)
-			/*			if betAmount == 0 {
-							setError("Bet of Zero Dollars not valid!", screen)
-							inText = ""
-							return nil
-						}
-			*/
+
 			mode = clear(mode, betValue)
 			mode = clear(mode, betInput)
 			mode = clear(mode, betEnable)

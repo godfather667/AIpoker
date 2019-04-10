@@ -82,43 +82,34 @@ func createTable(screen *ebiten.Image) {
 // dealCards place cards images on the displayed table.
 //   The actual cards dealt depend on the mode bits
 func dealCards(mode Bits, screen *ebiten.Image) {
-
-	if has(mode, cardDeal) {
-		imageDisplay(0, 250, 1, hide, display, screen)
-		imageDisplay(70, 80, 2, hide, display, screen)
-		imageDisplay(378, 20, 3, hide, display, screen)
-		imageDisplay(560, 20, 4, hide, display, screen)
-		imageDisplay(800, 80, 5, hide, display, screen)
-		imageDisplay(850, 250, 6, hide, display, screen)
-		imageDisplay(70, 440, 7, hide, display, screen)
-		imageDisplay(800, 440, 8, hide, display, screen)
-		imageDisplay(420, 460, 9, unhide, display, screen)
-
-		imageDisplay(64, 250, 10, hide, display, screen)
-		imageDisplay(134, 80, 11, hide, display, screen)
-		imageDisplay(314, 20, 12, hide, display, screen)
-		imageDisplay(624, 20, 13, hide, display, screen)
-		imageDisplay(864, 80, 14, hide, display, screen)
-		imageDisplay(914, 250, 15, hide, display, screen)
-		imageDisplay(134, 440, 16, hide, display, screen)
-		imageDisplay(864, 440, 17, hide, display, screen)
-		imageDisplay(484, 460, 18, unhide, display, screen)
-		return
+	for pi := dealPost; pi < dealPost+9; pi++ {
+		id := pi * 9 // Compute the table index
+		imageDisplay(float64(players[id]), float64(players[id+1]), players[id+4],
+			players[id+7], players[id+8], screen)
 	}
+	for pi := dealPost; pi < dealPost+9; pi++ {
+		id := pi * 9 // Compute the table index
+		imageDisplay(float64(players[id+2]), float64(players[id+3]), players[id+4],
+			players[id+7], players[id+8], screen)
+	}
+	//	id := dealPost * 9
+	id := 8 * 9
+	imageDisplay(float64(players[id+5]), float64(players[id+6]), 56,
+		unhide, display, screen)
 
-	if (mode & cardFlop) != 0 { // Burn Card = 20
+	if has(mode, cardFlop) { // Burn Card = 20
 		imageDisplay(319, 250, 21, unhide, display, screen)
 		imageDisplay(393, 250, 22, unhide, display, screen)
 		imageDisplay(467, 250, 23, unhide, display, screen)
 		return
 	}
 
-	if (mode & cardTurn) != 0 { // Burn Card = 24
+	if has(mode, cardTurn) { // Burn Card = 24
 		imageDisplay(541, 250, 25, unhide, display, screen)
 		return
 	}
 
-	if (mode & cardRiver) != 0 { // Burn Card = 26
+	if has(mode, cardRiver) { // Burn Card = 26
 		imageDisplay(615, 250, 27, unhide, display, screen)
 		return
 	}
