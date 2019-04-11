@@ -138,6 +138,19 @@ func clearError(screen *ebiten.Image) {
 	displayErrorMessage = ""
 }
 
+func msgBlank(x, y int, screen *ebiten.Image) {
+	blank, _, err := ebitenutil.NewImageFromFile(blankBack, ebiten.FilterDefault)
+	if err != nil {
+		log.Fatal(blankBack, err)
+	}
+	// Display Image
+	opts := &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(float64(x), float64(y))
+	// Draw the card image to the screen with an empty option
+	screen.DrawImage(blank, opts)
+}
+
 //
 // Display the individual message squares (ie Large buttons)
 //
@@ -151,4 +164,13 @@ func messageSquare(sx, sy int, px, py float64, colorCode color.NRGBA, screen *eb
 	opts.GeoM.Translate(px, py)
 	// Draw the card image to the screen with an empty option
 	screen.DrawImage(square, opts)
+}
+
+func betImage(post, bet int, screen *ebiten.Image) {
+	id := post * 4
+	msgBlank(betMap[id], betMap[id+1], screen)
+
+	msg := fmt.Sprintf("$%v", bet)
+	//	fmt.Println("Bet Msg: ", msg, "  Post: ", post)
+	messageDisplay(aTiny, msg, betMap[id+2], betMap[id+3], screen)
 }

@@ -45,6 +45,12 @@ func createTable(screen *ebiten.Image) {
 	if has(mode, waitDeal) {
 		messageSquare(150, 90, 10, 600, color.NRGBA{0x50, 0x50, 0xff, 0xff}, screen)
 		messageDisplay(aSmall, "DEAL", 40, 650, screen)
+
+		if dealPost == 9 {
+			dealPost = 5
+		} else {
+			dealPost += 1
+		}
 	}
 
 	// If the user has a bet/fold/check decision - Setup up the Buttons.
@@ -93,7 +99,7 @@ func dealCards(mode Bits, screen *ebiten.Image) {
 			players[id+7], players[id+8], screen)
 	}
 	//	id := dealPost * 9
-	id := 8 * 9
+	id := 17 * 9
 	imageDisplay(float64(players[id+5]), float64(players[id+6]), 56,
 		unhide, display, screen)
 
