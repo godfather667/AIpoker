@@ -73,7 +73,6 @@ func init() {
 
 // imageDisplay inserts individual images on the specified screen.
 func imageDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
-
 	// Create Card image
 	if d == undisplay {
 		return
@@ -81,11 +80,14 @@ func imageDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 	if h == hide {
 		card, _, err = ebitenutil.NewImageFromFile(cardBack, ebiten.FilterDefault)
 		if err != nil {
+			fmt.Println("CardBack Display Failed!")
 			log.Fatal(cardBack, err)
 		}
 	} else {
 		card, _, err = ebitenutil.NewImageFromFile(deck[cardValue], ebiten.FilterDefault)
 		if err != nil {
+			fmt.Println("Card ", cardValue, "  Filename: ", deck[cardValue],
+				"  Length: ", len(deck[cardValue]), "  Display Failed!")
 			log.Fatal(deck[cardValue], err)
 		}
 	}
@@ -95,6 +97,25 @@ func imageDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 	opts.GeoM.Translate(x, y)
 	// Draw the card image to the screen with an empty option
 	screen.DrawImage(card, opts)
+}
+
+// imageDisplay inserts individual images on the specified screen.
+func chipDisplay(x, y float64, chipName string, h, d int, screen *ebiten.Image) {
+	// Create Card image
+	if d == undisplay {
+		return
+	}
+	chipImage, _, err := ebitenutil.NewImageFromFile(chipName, ebiten.FilterDefault)
+	if err != nil {
+		fmt.Println("Chip = ", chipName, "Display Failed!")
+		log.Fatal(chipName, err)
+	}
+	// Display Image
+	opts := &ebiten.DrawImageOptions{}
+	// Add the Translate effect to the option struct.
+	opts.GeoM.Translate(x, y)
+	// Draw the card image to the screen with an empty option
+	screen.DrawImage(chipImage, opts)
 }
 
 // messageDisplay displays a message in one of six(6) fonts/sizes

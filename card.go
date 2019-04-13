@@ -88,19 +88,31 @@ func createTable(screen *ebiten.Image) {
 // dealCards place cards images on the displayed table.
 //   The actual cards dealt depend on the mode bits
 func dealCards(mode Bits, screen *ebiten.Image) {
+	displayAll(players)
+	//	undisplayAll(players)
+
+	card := 0
 	for pi := dealPost; pi < dealPost+9; pi++ {
 		id := pi * 9 // Compute the table index
-		imageDisplay(float64(players[id]), float64(players[id+1]), players[id+4],
+		imageDisplay(float64(players[id]), float64(players[id+1]), card,
 			players[id+7], players[id+8], screen)
+		card += 1
 	}
 	for pi := dealPost; pi < dealPost+9; pi++ {
 		id := pi * 9 // Compute the table index
-		imageDisplay(float64(players[id+2]), float64(players[id+3]), players[id+4],
+		imageDisplay(float64(players[id+2]), float64(players[id+3]), card,
 			players[id+7], players[id+8], screen)
+		card += 1
 	}
+
 	//	id := dealPost * 9
-	id := 17 * 9
-	imageDisplay(float64(players[id+5]), float64(players[id+6]), 56,
+
+	id := 8 * 9 // Dealer Chip
+	chipDisplay(float64(players[id+5]), float64(players[id+6]), chip[3],
+		unhide, display, screen)
+
+	cid := 8 * 2 //Player Chip
+	chipDisplay(float64(chipMap[cid]), float64(chipMap[cid+1]), chip[0],
 		unhide, display, screen)
 
 	if has(mode, cardFlop) { // Burn Card = 20
@@ -148,28 +160,28 @@ func has(b, flag Bits) bool { return b&flag != 0 }
 // shuffle randomly rearranges the cards in the virtual deck.
 //   Due to a tendency of cards at the first and last locations
 //   to stay thru a number of shuffles.  The cards at the locations
-//   first(1) and last(52) are swapped with random middle positions.
+//   first(1) and last(51) are swapped with random middle positions.
 //
 func shuffle() {
 	// Three Shuffles for each new hand!
-	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
-	deck[1], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[1]
+	deck[51], deck[rand.Intn(51)] = deck[rand.Intn(51)], deck[51]
+	deck[0], deck[rand.Intn(51)] = deck[rand.Intn(51)], deck[0]
 
-	rand.Shuffle(52, func(i, j int) {
+	rand.Shuffle(51, func(i, j int) {
 		deck[i], deck[j] = deck[j], deck[i]
 	})
 	// Shuffle Two
-	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
-	deck[1], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[1]
+	deck[51], deck[rand.Intn(51)] = deck[rand.Intn(51)], deck[51]
+	deck[0], deck[rand.Intn(51)] = deck[rand.Intn(51)], deck[0]
 
-	rand.Shuffle(52, func(i, j int) {
+	rand.Shuffle(51, func(i, j int) {
 		deck[i], deck[j] = deck[j], deck[i]
 	})
 	// Shuffle Three
-	deck[52], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[52]
-	deck[1], deck[rand.Intn(52)] = deck[rand.Intn(52)], deck[1]
+	deck[51], deck[rand.Intn(51)] = deck[rand.Intn(51)], deck[51]
+	deck[0], deck[rand.Intn(51)] = deck[rand.Intn(51)], deck[0]
 
-	rand.Shuffle(52, func(i, j int) {
+	rand.Shuffle(51, func(i, j int) {
 		deck[i], deck[j] = deck[j], deck[i]
 	})
 }

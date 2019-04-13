@@ -69,6 +69,8 @@ var mode Bits // Update Mask
 
 var dealPost = 0 // Deal Position
 
+var shotGate = 0 // One Shot Gate Value
+
 var result string // Value input value
 
 var mplusNormalFont font.Face // Font Variables
@@ -96,69 +98,59 @@ var (
 	betAmount int
 )
 
-var chip = map[int]string{
-	1: "images/dealer_chip.png",
-	2: "images/red_chip.png",
-	3: "images/stack.png",
-}
-
 var deck = map[int]string{
-	1:  "images/ace_of_clubs.png",
-	2:  "images/ace_of_diamonds.png",
-	3:  "images/ace_of_hearts.png",
-	4:  "images/ace_of_spades.png",
-	5:  "images/king_of_clubs.png",
-	6:  "images/king_of_diamonds.png",
-	7:  "images/king_of_hearts.png",
-	8:  "images/king_of_spades.png",
-	9:  "images/queen_of_clubs.png",
-	10: "images/queen_of_diamonds.png",
-	11: "images/queen_of_hearts.png",
-	12: "images/queen_of_spades.png",
-	13: "images/jack_of_clubs.png",
-	14: "images/jack_of_diamonds.png",
-	15: "images/jack_of_hearts.png",
-	16: "images/jack_of_spades.png",
-	17: "images/10_of_clubs.png",
-	18: "images/10_of_diamonds.png",
-	19: "images/10_of_hearts.png",
-	20: "images/10_of_spades.png",
-	21: "images/9_of_clubs.png",
-	22: "images/9_of_diamonds.png",
-	23: "images/9_of_hearts.png",
-	24: "images/9_of_spades.png",
-	25: "images/8_of_clubs.png",
-	26: "images/8_of_diamonds.png",
-	27: "images/8_of_hearts.png",
-	28: "images/8_of_spades.png",
-	29: "images/7_of_clubs.png",
-	30: "images/7_of_diamonds.png",
-	31: "images/7_of_hearts.png",
-	32: "images/7_of_spades.png",
-	33: "images/6_of_clubs.png",
-	34: "images/6_of_diamonds.png",
-	35: "images/6_of_hearts.png",
-	36: "images/6_of_spades.png",
-	37: "images/5_of_clubs.png",
-	38: "images/5_of_diamonds.png",
-	39: "images/5_of_hearts.png",
-	40: "images/5_of_spades.png",
-	41: "images/4_of_clubs.png",
-	42: "images/4_of_diamonds.png",
-	43: "images/4_of_hearts.png",
-	44: "images/4_of_spades.png",
-	45: "images/3_of_clubs.png",
-	46: "images/3_of_diamonds.png",
-	47: "images/3_of_hearts.png",
-	48: "images/3_of_spades.png",
-	49: "images/2_of_clubs.png",
-	50: "images/2_of_diamonds.png",
-	51: "images/2_of_hearts.png",
-	52: "images/2_of_spades.png",
-	53: "images/red_chip.png",
-	54: "images/stack.png",
-	55: "images/table.png",
-	56: "images/white_deal_chip.png",
+	0:  "images/ace_of_clubs.png",
+	1:  "images/ace_of_diamonds.png",
+	2:  "images/ace_of_hearts.png",
+	3:  "images/ace_of_spades.png",
+	4:  "images/king_of_clubs.png",
+	5:  "images/king_of_diamonds.png",
+	6:  "images/king_of_hearts.png",
+	7:  "images/king_of_spades.png",
+	8:  "images/queen_of_clubs.png",
+	9:  "images/queen_of_diamonds.png",
+	10: "images/queen_of_hearts.png",
+	11: "images/queen_of_spades.png",
+	12: "images/jack_of_clubs.png",
+	13: "images/jack_of_diamonds.png",
+	14: "images/jack_of_hearts.png",
+	15: "images/jack_of_spades.png",
+	16: "images/10_of_clubs.png",
+	17: "images/10_of_diamonds.png",
+	18: "images/10_of_hearts.png",
+	19: "images/10_of_spades.png",
+	20: "images/9_of_clubs.png",
+	21: "images/9_of_diamonds.png",
+	22: "images/9_of_hearts.png",
+	23: "images/9_of_spades.png",
+	24: "images/8_of_clubs.png",
+	25: "images/8_of_diamonds.png",
+	26: "images/8_of_hearts.png",
+	27: "images/8_of_spades.png",
+	28: "images/7_of_clubs.png",
+	29: "images/7_of_diamonds.png",
+	30: "images/7_of_hearts.png",
+	31: "images/7_of_spades.png",
+	32: "images/6_of_clubs.png",
+	33: "images/6_of_diamonds.png",
+	34: "images/6_of_hearts.png",
+	35: "images/6_of_spades.png",
+	36: "images/5_of_clubs.png",
+	37: "images/5_of_diamonds.png",
+	38: "images/5_of_hearts.png",
+	39: "images/5_of_spades.png",
+	40: "images/4_of_clubs.png",
+	41: "images/4_of_diamonds.png",
+	42: "images/4_of_hearts.png",
+	43: "images/4_of_spades.png",
+	44: "images/3_of_clubs.png",
+	45: "images/3_of_diamonds.png",
+	46: "images/3_of_hearts.png",
+	47: "images/3_of_spades.png",
+	48: "images/2_of_clubs.png",
+	49: "images/2_of_diamonds.png",
+	50: "images/2_of_hearts.png",
+	51: "images/2_of_spades.png",
 }
 
 // Card postions for each player
@@ -168,42 +160,71 @@ var players = []int{
 	70, 440, 134, 440, 7, 210, 390, hide, display,
 	0, 250, 64, 250, 1, 160, 260, hide, display,
 	70, 80, 134, 80, 2, 210, 160, hide, display,
-	378, 20, 314, 20, 3, 360, 160, hide, display,
-	560, 20, 624, 20, 4, 590, 160, hide, display,
-	800, 80, 864, 80, 5, 750, 180, hide, display,
-	850, 250, 914, 250, 6, 750, 270, hide, display,
+	378, 20, 314, 20, 3, 360, 140, hide, display,
+	560, 20, 624, 20, 4, 590, 140, hide, display,
+	800, 80, 864, 80, 5, 750, 140, hide, display,
+	850, 250, 914, 250, 6, 780, 260, hide, display,
 	800, 440, 864, 440, 8, 730, 390, hide, display,
-	420, 460, 484, 460, 9, 460, 400, unhide, display,
+	420, 460, 484, 460, 9, 430, 400, unhide, display,
 	70, 440, 134, 440, 7, 210, 390, hide, display,
 	0, 250, 64, 250, 1, 160, 260, hide, display,
 	70, 80, 134, 80, 2, 210, 160, hide, display,
-	378, 20, 314, 20, 3, 360, 160, hide, display,
-	560, 20, 624, 20, 4, 590, 160, hide, display,
-	800, 80, 864, 80, 5, 750, 180, hide, display,
-	850, 250, 914, 250, 6, 750, 270, hide, display,
+	378, 20, 314, 20, 3, 360, 140, hide, display,
+	560, 20, 624, 20, 4, 590, 140, hide, display,
+	800, 80, 864, 80, 5, 750, 140, hide, display,
+	850, 250, 914, 250, 6, 780, 260, hide, display,
 	800, 440, 864, 440, 8, 730, 390, hide, display,
-	420, 460, 484, 460, 9, 460, 400, unhide, display,
+	420, 460, 484, 460, 9, 430, 400, unhide, display,
+}
+
+// Player Chip Postions
+var chipMap = []int{
+	172, 400, //  7  102, 460,
+	160, 315, //  1  32,  580,
+	164, 176, //  2  102, 200,
+	410, 145, //  3  380, 130,
+	640, 146, //  4  592, 744,
+	752, 186, //  5  832, 200,
+	783, 310, //  6  882, 370,
+	734, 440, //  8  832, 560,
+	480, 406, //  9  452, 580,
+	172, 400, //  7  102, 460,
+	160, 315, //  1  32,  580,
+	164, 176, //  2  102, 200,
+	410, 145, //  3  380, 130,
+	640, 146, //  4  592, 744,
+	752, 186, //  5  832, 200,
+	783, 310, //  6  882, 370,
+	734, 440, //  8  832, 560,
+	480, 406, //  9  452, 580,
+}
+
+// Chip Images
+var chip = map[int]string{
+	0: "images/red_chip.png",
+	1: "images/stack.png",
+	2: "images/table.png",
+	3: "images/white_deal_chip.png",
 }
 
 var betMap = []int{
-	110, 524, 110, 540, // 7 D
-	30, 337, 30, 354, // 1 D
-	102, 165, 112, 180, // 2 D
-	350, 107, 354, 122, // 3 D
-	592, 107, 595, 122, // 4 D
-	832, 165, 843, 182, // 5 D
-	882, 336, 885, 354, // 6 D
-	830, 527, 842, 546, // 8 D
-	452, 558, 456, 578, // 9 D
-	110, 524, 110, 540, // 7 D
-	30, 337, 30, 354, // 1 D
-	102, 165, 112, 180, // 2 D
-	350, 107, 354, 122, // 3 D
-	592, 107, 595, 122, // 4 D
-	832, 165, 843, 182, // 5 D
-	882, 336, 885, 354, // 6 D
-	830, 527, 842, 546, // 8 D
-	452, 558, 456, 578, // 9 D
+	230, 440, //  1  32,  580,
+	260, 320, //  2  102, 200,
+	410, 140, //  3  410, 140,
+	592, 744, //  4  592, 744,
+	832, 200, //  5  832, 200,
+	882, 370, //  6  882, 370,
+	832, 560, //  8  832, 560,
+	452, 580, //  9  452, 580,
+	102, 460, //  7  102, 460,
+	32, 580, //  1  32,  580,
+	102, 200, //  2  102, 200,
+	410, 140, //  3  410, 140,
+	592, 744, //  4  592, 744,
+	832, 200, //  5  832, 200,
+	882, 370, //  6  882, 370,
+	832, 560, //  8  832, 560,
+	452, 580, //  9  452, 580,
 }
 
 var chartOne = []int{
