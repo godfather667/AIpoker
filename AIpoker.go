@@ -16,11 +16,13 @@ import (
 // uppate is called from the "run" loop. This function controls the operation
 // of the program. It is called every time the "run" loop completes a cycle.
 func update(screen *ebiten.Image) error {
+	dumpModes = true // Dump Mode Settings
 
 	createTable(screen)
 
 	if has(mode, cardDeal) {
 		dealCards(mode, screen) // Deal Cards
+		modeDump(mode)
 	}
 
 	// Logical Operations to Setup Rendering
@@ -30,10 +32,12 @@ func update(screen *ebiten.Image) error {
 		if x > 10 && x < 160 && y > 600 && y < 690 {
 			mode = set(mode, cardDeal)   // Process various Bet Options
 			mode = clear(mode, waitDeal) // Deal and remove Deal Button
+			modeDump(mode)
 		}
 	}
 
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && has(mode, betEnable) {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) &&
+		has(mode, betEnable) && !has(mode, betMade) {
 		x, y := ebiten.CursorPosition()
 		if x > 450 && x < 600 && y > 600 && y < 690 {
 			if !has(mode, betValue) {
@@ -41,12 +45,15 @@ func update(screen *ebiten.Image) error {
 			}
 			mode = set(mode, betValue) // Process various Bet Options
 			mode = set(mode, betInput)
+			mode = clear(mode, betEnable)
+			modeDump(mode)
 		}
 	}
 	if has(mode, betInput) {
 		inText, inputMode := inputUpdate(screen)
 		if inputMode != isNull {
 			result = inText //Update Output Image
+			modeDump(mode)
 		}
 
 		if inputMode == hasCR {
@@ -63,12 +70,14 @@ func update(screen *ebiten.Image) error {
 			mode = clear(mode, betEnable)
 			mode = set(mode, betMade)
 			mode = set(mode, aiProcess)
+			modeDump(mode)
 		}
 	}
 
 	// After User Action - Run the AI Processing
 	if has(mode, aiProcess) {
 		aiExec(betAmount, dealPost, mode, screen)
+		modeDump(mode)
 	}
 
 	if has(mode, cardDeal) {
@@ -79,6 +88,7 @@ func update(screen *ebiten.Image) error {
 			return nil
 		}
 		mode = set(mode, betEnable) // Enable Message Boxes
+		modeDump(mode)
 
 		return nil
 	}

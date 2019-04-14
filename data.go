@@ -65,7 +65,8 @@ const (
 var displayError = 0         // Display Error Message Counter
 var displayErrorMessage = "" // Error Message to Present
 
-var mode Bits // Update Mask
+var mode Bits         // Update Mask
+var dumpModes = false // ModeDump Enable
 
 var dealPost = 0 // Deal Position
 
