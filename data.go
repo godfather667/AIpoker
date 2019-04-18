@@ -50,7 +50,7 @@ const (
 	isNew  = 2 // Represents and New Value
 	isNull = 3 // Nothing has Changed this Update
 
-	dec = 60 // Display Error Counnt
+	dec = 60 // Display Error Count
 )
 
 // Primary Display Parameters.

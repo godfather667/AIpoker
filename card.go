@@ -65,16 +65,11 @@ func createTable(screen *ebiten.Image) {
 		messageSquare(150, 90, 450, 600, color.NRGBA{0x00, 0xff, 0x00, 0xff}, screen)
 		messageDisplay(aSmall, "BET", 490, 650, screen)
 
-		t := ""
 		if has(mode, betValue) {
-			// Blink the cursor.
-			if counter%60 < 30 {
-				t = "_"
-			}
-			// Error Message Control
+			// Display Error Message for 30 seconds.
 			messageError(screen)
-			// Blink Counter Control
-			counter++
+			// Blink the cursor once a second
+			t := blinkCounter()
 			messageDisplay(aTiny, "Value:"+result+t, 620, 650, screen)
 			mode = set(mode, betInput)
 		}

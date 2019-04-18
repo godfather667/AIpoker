@@ -145,6 +145,7 @@ func messageDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 //
 func messageError(screen *ebiten.Image) {
 	if displayError > 0 {
+		displayError--
 		text.Draw(screen, displayErrorMessage, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
 	} else {
 		clearError(screen)
@@ -161,6 +162,21 @@ func setError(msg string, screen *ebiten.Image) {
 func clearError(screen *ebiten.Image) {
 	displayError = 0
 	displayErrorMessage = ""
+}
+
+func blinkCounter() (t string) {
+	// Blink the cursor.
+	counter++
+	if counter%60 < 30 {
+		t = "_"
+	} else {
+		t = ""
+	}
+	// prevent counter overflow ( Rare but could happen!)
+	if counter > 60 {
+		counter = 0
+	}
+	return t
 }
 
 func msgBlank(x, y int, screen *ebiten.Image) {
