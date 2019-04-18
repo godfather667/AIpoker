@@ -37,7 +37,7 @@ func update(screen *ebiten.Image) error {
 	}
 
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) &&
-		has(mode, betEnable) && !has(mode, betMa de) {
+		has(mode, betEnable) && !has(mode, betMade) {
 		x, y := ebiten.CursorPosition()
 		if x > 450 && x < 600 && y > 600 && y < 690 {
 			if !has(mode, betValue) {

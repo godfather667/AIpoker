@@ -61,7 +61,13 @@ const (
 	dpi = 72
 )
 
-// All Global Variables used bu AIpoker.
+// Common Images
+const cardTable = "images/table.png"
+
+const cardBack = "images/playing-cards-back.png"
+const blankBack = "images/valueBackground.png"
+
+// All Global Variables used by AIpoker.
 var displayError = 0         // Display Error Message Counter
 var displayErrorMessage = "" // Error Message to Present
 
@@ -86,18 +92,11 @@ var card *ebiten.Image  // Card Image
 
 var err error // Error
 
-var cardTable = "images/table.png"
+var counter = 0 //Blink Counter
 
-var cardBack = "images/playing-cards-back.png"
-var blankBack = "images/valueBackground.png"
-
-var counter = 0 // Blink Counter
-
-var (
-	inText    = ""
-	ctrl      = 0
-	betAmount int
-)
+var inText = ""
+var ctrl = 0
+var betAmount int
 
 var deck = map[int]string{
 	0:  "images/ace_of_clubs.png",

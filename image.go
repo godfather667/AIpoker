@@ -144,7 +144,11 @@ func messageDisplay(font int, msg string, x, y int, screen *ebiten.Image) {
 //   The error message is display at the bottom of the screen in red letter
 //
 func messageError(screen *ebiten.Image) {
-	text.Draw(screen, displayErrorMessage, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
+	if displayError > 0 {
+		text.Draw(screen, displayErrorMessage, smallArcadeFont, 250, 760, color.NRGBA{0xff, 0x00, 0x00, 0xff}) // Color Red
+	} else {
+		clearError(screen)
+	}
 }
 
 // Set Error Message loads message buffer with message and sets download counter dec constant

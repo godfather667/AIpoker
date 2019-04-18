@@ -72,12 +72,8 @@ func createTable(screen *ebiten.Image) {
 				t = "_"
 			}
 			// Error Message Control
-			if displayError > 0 {
-				messageError(screen)
-				displayError--
-			} else {
-				clearError(screen)
-			}
+			messageError(screen)
+			// Blink Counter Control
 			counter++
 			messageDisplay(aTiny, "Value:"+result+t, 620, 650, screen)
 			mode = set(mode, betInput)
