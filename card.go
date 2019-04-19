@@ -154,6 +154,10 @@ func has(b, flag Bits) bool { return b&flag != 0 }
 //   first(1) and last(51) are swapped with random middle positions.
 //
 func shuffle() {
+	//  Initialize Deck Values
+	for i, v := range deckInitial {
+		deck[i] = v
+	}
 	// Three Shuffles for each new hand!
 	deck[51], deck[rand.Intn(51)] = deck[rand.Intn(51)], deck[51]
 	deck[0], deck[rand.Intn(51)] = deck[rand.Intn(51)], deck[0]

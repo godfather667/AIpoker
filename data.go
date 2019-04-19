@@ -76,8 +76,6 @@ var dumpModes = false // ModeDump Enable
 
 var dealPost = 0 // Deal Position
 
-var shotGate = 0 // One Shot Gate Value
-
 var result string // Value input value
 
 var mplusNormalFont font.Face // Font Variables
@@ -97,6 +95,131 @@ var counter = 0 //Blink Counter
 var inText = ""
 var ctrl = 0
 var betAmount int
+
+// Modulo 4 converts deck number to cardValue
+var cardValue = map[int]string{
+	0:  "A",
+	1:  "K",
+	2:  "Q",
+	3:  "J",
+	4:  "10",
+	5:  "9",
+	6:  "8",
+	7:  "7",
+	8:  "6",
+	9:  "5",
+	10: "4",
+	11: "3",
+	12: "2",
+}
+var deckInitial = map[int]string{
+	0:  "images/ace_of_clubs.png",
+	1:  "images/ace_of_diamonds.png",
+	2:  "images/ace_of_hearts.png",
+	3:  "images/ace_of_spades.png",
+	4:  "images/king_of_clubs.png",
+	5:  "images/king_of_diamonds.png",
+	6:  "images/king_of_hearts.png",
+	7:  "images/king_of_spades.png",
+	8:  "images/queen_of_clubs.png",
+	9:  "images/queen_of_diamonds.png",
+	10: "images/queen_of_hearts.png",
+	11: "images/queen_of_spades.png",
+	12: "images/jack_of_clubs.png",
+	13: "images/jack_of_diamonds.png",
+	14: "images/jack_of_hearts.png",
+	15: "images/jack_of_spades.png",
+	16: "images/10_of_clubs.png",
+	17: "images/10_of_diamonds.png",
+	18: "images/10_of_hearts.png",
+	19: "images/10_of_spades.png",
+	20: "images/9_of_clubs.png",
+	21: "images/9_of_diamonds.png",
+	22: "images/9_of_hearts.png",
+	23: "images/9_of_spades.png",
+	24: "images/8_of_clubs.png",
+	25: "images/8_of_diamonds.png",
+	26: "images/8_of_hearts.png",
+	27: "images/8_of_spades.png",
+	28: "images/7_of_clubs.png",
+	29: "images/7_of_diamonds.png",
+	30: "images/7_of_hearts.png",
+	31: "images/7_of_spades.png",
+	32: "images/6_of_clubs.png",
+	33: "images/6_of_diamonds.png",
+	34: "images/6_of_hearts.png",
+	35: "images/6_of_spades.png",
+	36: "images/5_of_clubs.png",
+	37: "images/5_of_diamonds.png",
+	38: "images/5_of_hearts.png",
+	39: "images/5_of_spades.png",
+	40: "images/4_of_clubs.png",
+	41: "images/4_of_diamonds.png",
+	42: "images/4_of_hearts.png",
+	43: "images/4_of_spades.png",
+	44: "images/3_of_clubs.png",
+	45: "images/3_of_diamonds.png",
+	46: "images/3_of_hearts.png",
+	47: "images/3_of_spades.png",
+	48: "images/2_of_clubs.png",
+	49: "images/2_of_diamonds.png",
+	50: "images/2_of_hearts.png",
+	51: "images/2_of_spades.png",
+}
+var deckReverse = map[string]int{
+	"images/ace_of_clubs.png":      0,
+	"images/ace_of_diamonds.png":   1,
+	"images/ace_of_hearts.png":     2,
+	"images/ace_of_spades.png":     3,
+	"images/king_of_clubs.png":     4,
+	"images/king_of_diamonds.png":  5,
+	"images/king_of_hearts.png":    6,
+	"images/king_of_spades.png":    7,
+	"images/queen_of_clubs.png":    8,
+	"images/queen_of_diamonds.png": 9,
+	"images/queen_of_hearts.png":   10,
+	"images/queen_of_spades.png":   11,
+	"images/jack_of_clubs.png":     12,
+	"images/jack_of_diamonds.png":  13,
+	"images/jack_of_hearts.png":    14,
+	"images/jack_of_spades.png":    15,
+	"images/10_of_clubs.png":       16,
+	"images/10_of_diamonds.png":    17,
+	"images/10_of_hearts.png":      18,
+	"images/10_of_spades.png":      19,
+	"images/9_of_clubs.png":        20,
+	"images/9_of_diamonds.png":     21,
+	"images/9_of_hearts.png":       22,
+	"images/9_of_spades.png":       23,
+	"images/8_of_clubs.png":        24,
+	"images/8_of_diamonds.png":     25,
+	"images/8_of_hearts.png":       26,
+	"images/8_of_spades.png":       27,
+	"images/7_of_clubs.png":        28,
+	"images/7_of_diamonds.png":     29,
+	"images/7_of_hearts.png":       30,
+	"images/7_of_spades.png":       31,
+	"images/6_of_clubs.png":        32,
+	"images/6_of_diamonds.png":     33,
+	"images/6_of_hearts.png":       34,
+	"images/6_of_spades.png":       35,
+	"images/5_of_clubs.png":        36,
+	"images/5_of_diamonds.png":     37,
+	"images/5_of_hearts.png":       38,
+	"images/5_of_spades.png":       39,
+	"images/4_of_clubs.png":        40,
+	"images/4_of_diamonds.png":     41,
+	"images/4_of_hearts.png":       42,
+	"images/4_of_spades.png":       43,
+	"images/3_of_clubs.png":        44,
+	"images/3_of_diamonds.png":     45,
+	"images/3_of_hearts.png":       46,
+	"images/3_of_spades.png":       47,
+	"images/2_of_clubs.png":        48,
+	"images/2_of_diamonds.png":     49,
+	"images/2_of_hearts.png":       50,
+	"images/2_of_spades.png":       51,
+}
 
 var deck = map[int]string{
 	0:  "images/ace_of_clubs.png",
@@ -227,22 +350,21 @@ var betMap = []int{
 	800, 400, 810, 420, // 8   452, 580,
 	420, 430, 424, 450, // 9   102, 460,
 }
-
 var chartOne = []int{
-	5, 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	5, 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0,
-	3, 3, 5, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0,
-	3, 3, 0, 5, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0,
-	3, 0, 0, 0, 5, 3, 3, 3, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+	//	A  K  Q  J  10 9  8  7  6  5  4  3  2
+	9, 9, 8, 8, 8, 5, 3, 3, 3, 3, 3, 3, 3, // A
+	9, 9, 3, 3, 8, 5, 7, 7, 7, 7, 3, 3, 3, // K
+	9, 2, 9, 8, 8, 5, 5, 3, 3, 3, 3, 3, 3, // Q
+	2, 2, 2, 9, 8, 5, 5, 3, 3, 3, 3, 3, 3, // J
+	9, 2, 2, 2, 9, 9, 5, 5, 3, 3, 3, 3, 3, // 10
+	1, 1, 1, 1, 1, 9, 9, 5, 5, 3, 3, 3, 3, // 9
+	1, 1, 1, 1, 1, 1, 9, 9, 5, 5, 3, 3, 3, // 8
+	1, 1, 1, 1, 1, 1, 3, 9, 9, 5, 5, 3, 3, // 7
+	1, 1, 1, 1, 1, 1, 0, 3, 9, 5, 5, 5, 0, // 6
+	0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5, 5, 5, // 5
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5, 5, // 4
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5, // 3
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9, 5, // 2
 }
 
 // Bits to String Conversion Map

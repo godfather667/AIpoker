@@ -66,16 +66,3 @@ func undisplayAll(players []int) {
 		}
 	}
 }
-
-func setOneShot() {
-	shotGate = 0
-	return
-}
-
-func oneShot(msg string) {
-	if shotGate == 0 {
-		fmt.Println(msg)
-	}
-	shotGate = 1
-	return
-}
