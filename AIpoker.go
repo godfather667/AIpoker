@@ -76,7 +76,7 @@ func update(screen *ebiten.Image) error {
 
 	// After User Action - Run the AI Processing
 	if has(mode, aiProcess) {
-		aiExec(betAmount, dealPost, mode, screen)
+		aiExec(users, betAmount, dealPost, mode, screen)
 		modeDump(mode)
 	}
 

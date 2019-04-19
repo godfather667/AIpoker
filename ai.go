@@ -7,7 +7,10 @@ import (
 	"github.com/hajimehoshi/ebiten"
 )
 
-func aiExec(betAmount, dealPost int, mode Bits, screen *ebiten.Image) {
-	betImage(dealPost, betAmount, screen)
+func aiExec(users []int, betAmount, dealPost int, mode Bits, screen *ebiten.Image) {
+	for i := 0; i < 9; i++ {
+		betImage(dealPost, betAmount, screen)
+
+	}
 	return
 }

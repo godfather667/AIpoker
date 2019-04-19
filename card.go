@@ -46,10 +46,10 @@ func createTable(screen *ebiten.Image) {
 		messageSquare(150, 90, 10, 600, color.NRGBA{0x50, 0x50, 0xff, 0xff}, screen)
 		messageDisplay(aSmall, "DEAL", 40, 650, screen)
 
-		if dealPost == 9 {
-			dealPost = 5
+		if dealPost == 8 { // Button(dealer) Chip Position updated
+			dealPost = 0
 		} else {
-			dealPost += 1
+			dealPost++
 		}
 	}
 
