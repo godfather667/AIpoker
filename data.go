@@ -96,6 +96,8 @@ var inText = ""
 var ctrl = 0
 var betAmount int
 
+var users []int // Users Cards
+
 // Modulo 4 converts deck number to cardValue
 var cardValue = map[int]string{
 	0:  "A",

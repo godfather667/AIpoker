@@ -87,24 +87,16 @@ func dealCards(mode Bits, screen *ebiten.Image) {
 		id := pi * 9 // Compute the table index
 		imageDisplay(float64(players[id]), float64(players[id+1]), card,
 			players[id+7], players[id+8], screen)
-		card += 1
+		users = append(users, card)
+		card++
 	}
 	for pi := dealPost; pi < dealPost+9; pi++ {
 		id := pi * 9 // Compute the table index
 		imageDisplay(float64(players[id+2]), float64(players[id+3]), card,
 			players[id+7], players[id+8], screen)
-		card += 1
+		users = append(users, card)
+		card++
 	}
-
-	/*
-		id := dealPost * 9 // Dealer  Chip
-		chipDisplay(float64(players[id+5]), float64(players[id+6]), chip[3],
-			unhide, display, screen)
-
-		cid := dealPost * 2 //Player Chip
-		chipDisplay(float64(chipMap[cid]), float64(chipMap[cid+1]), chip[0],
-			unhide, display, screen)
-	*/
 
 	if has(mode, cardFlop) { // Burn Card = 20
 		imageDisplay(319, 250, 21, unhide, display, screen)

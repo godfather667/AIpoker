@@ -105,7 +105,7 @@ func main() {
 
 	shuffle()       // Shuffle Deck
 	mode = waitDeal // Wait for user to select Deal!
-
+	dealPost = 0    // Initialize Deal Position
 	//
 	// Run Loop
 	//
