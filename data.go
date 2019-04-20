@@ -10,18 +10,20 @@ import (
 type Bits uint16
 
 // Bit Mask Defitions for the "mode" word.
+// BIT MASK "MUST" MATCH VARIABLE DMAP!!!!
 const (
 	cardDeal = 1 << iota
+	cardDelt
 	cardFlop
 	cardTurn
 	cardRiver
 	betValue
 	betInput
 	betEnable
-	inputWait
-	waitDeal
-	aiProcess
 	betMade
+	inputWait
+	dealWait
+	aiProcess
 	foldMade
 	checkMade
 )
@@ -96,9 +98,62 @@ var inText = ""
 var ctrl = 0
 var betAmount int
 
-var users []int // Users Cards
+var users [9][2]int                       // Users Cards
+var comCards = [5]int{21, 22, 23, 25, 27} // common cards
 
-// Modulo 4 converts deck number to cardValue
+// Card postions for each player
+// The Player Position Table is duplicated so that starting at at any point
+// will allow nine positions to be dealt.
+var players = []int{
+	70, 440, 134, 440, 140, 210, 390, hide, display,
+	0, 250, 64, 250, 1, 160, 260, hide, display,
+	70, 80, 134, 80, 2, 220, 170, hide, display,
+	378, 20, 314, 20, 3, 390, 140, hide, display,
+	560, 20, 624, 20, 4, 630, 140, hide, display,
+	800, 80, 864, 80, 5, 750, 140, hide, display,
+	850, 250, 914, 250, 6, 780, 260, hide, display,
+	800, 440, 864, 440, 8, 730, 390, hide, display,
+	420, 460, 484, 460, 9, 420, 380, unhide, display,
+	70, 440, 134, 440, 140, 210, 390, hide, display,
+	0, 250, 64, 250, 1, 160, 260, hide, display,
+	70, 80, 134, 80, 2, 220, 170, hide, display,
+	378, 20, 314, 20, 3, 390, 140, hide, display,
+	560, 20, 624, 20, 4, 630, 140, hide, display,
+	800, 80, 864, 80, 5, 750, 140, hide, display,
+	850, 250, 914, 250, 6, 780, 260, hide, display,
+	800, 440, 864, 440, 8, 730, 390, hide, display,
+	420, 460, 484, 460, 9, 420, 380, unhide, display,
+}
+
+// Player Chip Postions
+var chipMap = []int{
+	170, 390, //  7  102, 460,
+	160, 315, //  1  32,  580,
+	170, 176, //  2  102, 200,
+	450, 145, //  3  380, 130,
+	675, 146, //  4  592, 744,
+	752, 186, //  5  832, 200,
+	783, 310, //  6  882, 370,
+	734, 440, //  8  832, 560,
+	470, 382, //  9  452, 580,
+	170, 390, //  7  102, 460,
+	160, 315, //  1  32,  580,
+	170, 176, //  2  102, 200,
+	450, 145, //  3  380, 130,
+	675, 146, //  4  592, 744,
+	752, 186, //  5  832, 200,
+	783, 310, //  6  882, 370,
+	734, 440, //  8  832, 560,
+	470, 382, //  9  452, 580,
+}
+
+// Chip Images
+var chip = map[int]string{
+	0: "images/red_chip.png",
+	1: "images/stack.png",
+	2: "images/table.png",
+	3: "images/white_deal_chip.png",
+}
 var cardValue = map[int]string{
 	0:  "A",
 	1:  "K",
@@ -168,60 +223,6 @@ var deckInitial = map[int]string{
 	50: "images/2_of_hearts.png",
 	51: "images/2_of_spades.png",
 }
-var deckReverse = map[string]int{
-	"images/ace_of_clubs.png":      0,
-	"images/ace_of_diamonds.png":   1,
-	"images/ace_of_hearts.png":     2,
-	"images/ace_of_spades.png":     3,
-	"images/king_of_clubs.png":     4,
-	"images/king_of_diamonds.png":  5,
-	"images/king_of_hearts.png":    6,
-	"images/king_of_spades.png":    7,
-	"images/queen_of_clubs.png":    8,
-	"images/queen_of_diamonds.png": 9,
-	"images/queen_of_hearts.png":   10,
-	"images/queen_of_spades.png":   11,
-	"images/jack_of_clubs.png":     12,
-	"images/jack_of_diamonds.png":  13,
-	"images/jack_of_hearts.png":    14,
-	"images/jack_of_spades.png":    15,
-	"images/10_of_clubs.png":       16,
-	"images/10_of_diamonds.png":    17,
-	"images/10_of_hearts.png":      18,
-	"images/10_of_spades.png":      19,
-	"images/9_of_clubs.png":        20,
-	"images/9_of_diamonds.png":     21,
-	"images/9_of_hearts.png":       22,
-	"images/9_of_spades.png":       23,
-	"images/8_of_clubs.png":        24,
-	"images/8_of_diamonds.png":     25,
-	"images/8_of_hearts.png":       26,
-	"images/8_of_spades.png":       27,
-	"images/7_of_clubs.png":        28,
-	"images/7_of_diamonds.png":     29,
-	"images/7_of_hearts.png":       30,
-	"images/7_of_spades.png":       31,
-	"images/6_of_clubs.png":        32,
-	"images/6_of_diamonds.png":     33,
-	"images/6_of_hearts.png":       34,
-	"images/6_of_spades.png":       35,
-	"images/5_of_clubs.png":        36,
-	"images/5_of_diamonds.png":     37,
-	"images/5_of_hearts.png":       38,
-	"images/5_of_spades.png":       39,
-	"images/4_of_clubs.png":        40,
-	"images/4_of_diamonds.png":     41,
-	"images/4_of_hearts.png":       42,
-	"images/4_of_spades.png":       43,
-	"images/3_of_clubs.png":        44,
-	"images/3_of_diamonds.png":     45,
-	"images/3_of_hearts.png":       46,
-	"images/3_of_spades.png":       47,
-	"images/2_of_clubs.png":        48,
-	"images/2_of_diamonds.png":     49,
-	"images/2_of_hearts.png":       50,
-	"images/2_of_spades.png":       51,
-}
 
 var deck = map[int]string{
 	0:  "images/ace_of_clubs.png",
@@ -278,58 +279,59 @@ var deck = map[int]string{
 	51: "images/2_of_spades.png",
 }
 
-// Card postions for each player
-// The Player Position Table is duplicated so that starting at at any point
-// will allow nine positions to be dealt.
-var players = []int{
-	70, 440, 134, 440, 140, 210, 390, hide, display,
-	0, 250, 64, 250, 1, 160, 260, hide, display,
-	70, 80, 134, 80, 2, 220, 170, hide, display,
-	378, 20, 314, 20, 3, 390, 140, hide, display,
-	560, 20, 624, 20, 4, 630, 140, hide, display,
-	800, 80, 864, 80, 5, 750, 140, hide, display,
-	850, 250, 914, 250, 6, 780, 260, hide, display,
-	800, 440, 864, 440, 8, 730, 390, hide, display,
-	420, 460, 484, 460, 9, 420, 380, unhide, display,
-	70, 440, 134, 440, 140, 210, 390, hide, display,
-	0, 250, 64, 250, 1, 160, 260, hide, display,
-	70, 80, 134, 80, 2, 220, 170, hide, display,
-	378, 20, 314, 20, 3, 390, 140, hide, display,
-	560, 20, 624, 20, 4, 630, 140, hide, display,
-	800, 80, 864, 80, 5, 750, 140, hide, display,
-	850, 250, 914, 250, 6, 780, 260, hide, display,
-	800, 440, 864, 440, 8, 730, 390, hide, display,
-	420, 460, 484, 460, 9, 420, 380, unhide, display,
-}
-
-// Player Chip Postions
-var chipMap = []int{
-	170, 390, //  7  102, 460,
-	160, 315, //  1  32,  580,
-	170, 176, //  2  102, 200,
-	450, 145, //  3  380, 130,
-	675, 146, //  4  592, 744,
-	752, 186, //  5  832, 200,
-	783, 310, //  6  882, 370,
-	734, 440, //  8  832, 560,
-	470, 382, //  9  452, 580,
-	170, 390, //  7  102, 460,
-	160, 315, //  1  32,  580,
-	170, 176, //  2  102, 200,
-	450, 145, //  3  380, 130,
-	675, 146, //  4  592, 744,
-	752, 186, //  5  832, 200,
-	783, 310, //  6  882, 370,
-	734, 440, //  8  832, 560,
-	470, 382, //  9  452, 580,
-}
-
-// Chip Images
-var chip = map[int]string{
-	0: "images/red_chip.png",
-	1: "images/stack.png",
-	2: "images/table.png",
-	3: "images/white_deal_chip.png",
+var deckReverse = map[string]int{
+	"images/ace_of_clubs.png":      0,
+	"images/ace_of_diamonds.png":   1,
+	"images/ace_of_hearts.png":     2,
+	"images/ace_of_spades.png":     3,
+	"images/king_of_clubs.png":     4,
+	"images/king_of_diamonds.png":  5,
+	"images/king_of_hearts.png":    6,
+	"images/king_of_spades.png":    7,
+	"images/queen_of_clubs.png":    8,
+	"images/queen_of_diamonds.png": 9,
+	"images/queen_of_hearts.png":   10,
+	"images/queen_of_spades.png":   11,
+	"images/jack_of_clubs.png":     12,
+	"images/jack_of_diamonds.png":  13,
+	"images/jack_of_hearts.png":    14,
+	"images/jack_of_spades.png":    15,
+	"images/10_of_clubs.png":       16,
+	"images/10_of_diamonds.png":    17,
+	"images/10_of_hearts.png":      18,
+	"images/10_of_spades.png":      19,
+	"images/9_of_clubs.png":        20,
+	"images/9_of_diamonds.png":     21,
+	"images/9_of_hearts.png":       22,
+	"images/9_of_spades.png":       23,
+	"images/8_of_clubs.png":        24,
+	"images/8_of_diamonds.png":     25,
+	"images/8_of_hearts.png":       26,
+	"images/8_of_spades.png":       27,
+	"images/7_of_clubs.png":        28,
+	"images/7_of_diamonds.png":     29,
+	"images/7_of_hearts.png":       30,
+	"images/7_of_spades.png":       31,
+	"images/6_of_clubs.png":        32,
+	"images/6_of_diamonds.png":     33,
+	"images/6_of_hearts.png":       34,
+	"images/6_of_spades.png":       35,
+	"images/5_of_clubs.png":        36,
+	"images/5_of_diamonds.png":     37,
+	"images/5_of_hearts.png":       38,
+	"images/5_of_spades.png":       39,
+	"images/4_of_clubs.png":        40,
+	"images/4_of_diamonds.png":     41,
+	"images/4_of_hearts.png":       42,
+	"images/4_of_spades.png":       43,
+	"images/3_of_clubs.png":        44,
+	"images/3_of_diamonds.png":     45,
+	"images/3_of_hearts.png":       46,
+	"images/3_of_spades.png":       47,
+	"images/2_of_clubs.png":        48,
+	"images/2_of_diamonds.png":     49,
+	"images/2_of_hearts.png":       50,
+	"images/2_of_spades.png":       51,
 }
 
 var betMap = []int{
@@ -352,35 +354,36 @@ var betMap = []int{
 	800, 400, 810, 420, // 8   452, 580,
 	420, 430, 424, 450, // 9   102, 460,
 }
-var chartOne = []int{
-	//	A  K  Q  J  10 9  8  7  6  5  4  3  2
-	9, 9, 8, 8, 8, 5, 3, 3, 3, 3, 3, 3, 3, // A
-	9, 9, 3, 3, 8, 5, 7, 7, 7, 7, 3, 3, 3, // K
-	9, 2, 9, 8, 8, 5, 5, 3, 3, 3, 3, 3, 3, // Q
-	2, 2, 2, 9, 8, 5, 5, 3, 3, 3, 3, 3, 3, // J
-	9, 2, 2, 2, 9, 9, 5, 5, 3, 3, 3, 3, 3, // 10
-	1, 1, 1, 1, 1, 9, 9, 5, 5, 3, 3, 3, 3, // 9
-	1, 1, 1, 1, 1, 1, 9, 9, 5, 5, 3, 3, 3, // 8
-	1, 1, 1, 1, 1, 1, 3, 9, 9, 5, 5, 3, 3, // 7
-	1, 1, 1, 1, 1, 1, 0, 3, 9, 5, 5, 5, 0, // 6
-	0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5, 5, 5, // 5
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5, 5, // 4
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5, // 3
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9, 5, // 2
+var chartOne = [13][13]int{
+	//A K  Q  J  10 9  8  7  6  5  4  3  2
+	{9, 9, 8, 8, 8, 5, 3, 3, 3, 3, 3, 3, 3}, // A
+	{9, 9, 3, 3, 8, 5, 7, 7, 7, 7, 3, 3, 3}, // K
+	{9, 2, 9, 8, 8, 5, 5, 3, 3, 3, 3, 3, 3}, // Q
+	{2, 2, 2, 9, 8, 5, 5, 3, 3, 3, 3, 3, 3}, // J
+	{9, 2, 2, 2, 9, 9, 5, 5, 3, 3, 3, 3, 3}, // 10
+	{1, 1, 1, 1, 1, 9, 9, 5, 5, 3, 3, 3, 3}, // 9
+	{1, 1, 1, 1, 1, 1, 9, 9, 5, 5, 3, 3, 3}, // 8
+	{1, 1, 1, 1, 1, 1, 3, 9, 9, 5, 5, 3, 3}, // 7
+	{1, 1, 1, 1, 1, 1, 0, 3, 9, 5, 5, 5, 0}, // 6
+	{0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5, 5, 5}, // 5
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5, 5}, // 4
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 5}, // 3
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9, 5}, // 2
 }
 
 // Bits to String Conversion Map
 var dmap = map[Bits]string{
 	cardDeal:  "cardDeal",
+	cardDelt:  "cardDelt",
 	cardFlop:  "cardFlop",
 	cardTurn:  "cardTurn",
-	cardRiver: "cardRive",
+	cardRiver: "cardRiver",
 	betValue:  "betValue",
 	betInput:  "betInput",
-	inputWait: "inputWait",
-	waitDeal:  "waitDeal",
-	aiProcess: "aiProcess",
 	betMade:   "betMade",
+	inputWait: "inputWait",
+	dealWait:  "dealWait",
+	aiProcess: "aiProcess",
 	foldMade:  "foldMade",
 	checkMade: "checkMade",
 }

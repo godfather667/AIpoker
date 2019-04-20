@@ -10,6 +10,9 @@ func modeDump(mode Bits) {
 		if has(mode, cardDeal) {
 			fmt.Println("Mode = cardDeal")
 		}
+		if has(mode, cardDelt) {
+			fmt.Println("Mode = cardDelt")
+		}
 		if has(mode, cardFlop) {
 			fmt.Println("Mode = cardFlop")
 		}
@@ -28,17 +31,17 @@ func modeDump(mode Bits) {
 		if has(mode, betEnable) {
 			fmt.Println("Mode = betEnable")
 		}
+		if has(mode, betMade) {
+			fmt.Println("Mode = betMade")
+		}
 		if has(mode, inputWait) {
 			fmt.Println("Mode = inputWait")
 		}
-		if has(mode, waitDeal) {
-			fmt.Println("Mode = waitDeal")
+		if has(mode, dealWait) {
+			fmt.Println("Mode = dealWait")
 		}
 		if has(mode, aiProcess) {
 			fmt.Println("Mode = aiProcess")
-		}
-		if has(mode, betMade) {
-			fmt.Println("Mode = betMade")
 		}
 		if has(mode, foldMade) {
 			fmt.Println("Mode = foldMode")

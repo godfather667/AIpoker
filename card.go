@@ -2,6 +2,7 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 	_ "image/png"
 	"log"
@@ -42,7 +43,7 @@ func createTable(screen *ebiten.Image) {
 	screen.DrawImage(table, opts)
 
 	// if waiting for Deal
-	if has(mode, waitDeal) {
+	if has(mode, dealWait) {
 		messageSquare(150, 90, 10, 600, color.NRGBA{0x50, 0x50, 0xff, 0xff}, screen)
 		messageDisplay(aSmall, "DEAL", 40, 650, screen)
 
@@ -83,20 +84,26 @@ func dealCards(mode Bits, screen *ebiten.Image) {
 	//	undisplayAll(players)
 
 	card := 0
+	ui := 0
 	for pi := dealPost; pi < dealPost+9; pi++ {
 		id := pi * 9 // Compute the table index
 		imageDisplay(float64(players[id]), float64(players[id+1]), card,
 			players[id+7], players[id+8], screen)
-		users = append(users, card)
+		users[ui][0] = card
+		ui++
 		card++
 	}
+	ui = 0
 	for pi := dealPost; pi < dealPost+9; pi++ {
 		id := pi * 9 // Compute the table index
 		imageDisplay(float64(players[id+2]), float64(players[id+3]), card,
 			players[id+7], players[id+8], screen)
-		users = append(users, card)
+		users[ui][1] = card
+		ui++
 		card++
 	}
+
+	fmt.Println(users)
 
 	if has(mode, cardFlop) { // Burn Card = 20
 		imageDisplay(319, 250, 21, unhide, display, screen)

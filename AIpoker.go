@@ -27,11 +27,11 @@ func update(screen *ebiten.Image) error {
 
 	// Logical Operations to Setup Rendering
 
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && has(mode, waitDeal) {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && has(mode, dealWait) {
 		x, y := ebiten.CursorPosition()
 		if x > 10 && x < 160 && y > 600 && y < 690 {
 			mode = set(mode, cardDeal)   // Process various Bet Options
-			mode = clear(mode, waitDeal) // Deal and remove Deal Button
+			mode = clear(mode, dealWait) // Deal and remove Deal Button
 			modeDump(mode)
 		}
 	}
@@ -69,6 +69,7 @@ func update(screen *ebiten.Image) error {
 			mode = clear(mode, betInput)
 			mode = clear(mode, betEnable)
 			mode = set(mode, betMade)
+			mode = set(mode, cardDelt)
 			mode = set(mode, aiProcess)
 			modeDump(mode)
 		}
@@ -104,7 +105,7 @@ func update(screen *ebiten.Image) error {
 func main() {
 
 	shuffle()       // Shuffle Deck
-	mode = waitDeal // Wait for user to select Deal!
+	mode = dealWait // Wait for user to select Deal!
 	dealPost = 0    // Initialize Deal Position
 	//
 	// Run Loop
