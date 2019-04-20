@@ -337,6 +337,7 @@ var deckReverse = map[string]int{
 // CardReverse give Card Value ( A = 0, K = 1, Q = 2 ...)
 // DeckReverse above allows computing Suits as follows:
 //    Suits are "deckReverse" modulo 4 - (0 = club, 1 = diamond, 2 = hearts, 3 = spades)
+
 var cardReverse = map[string]int{
 	"images/ace_of_clubs.png":      0,
 	"images/ace_of_diamonds.png":   0,
