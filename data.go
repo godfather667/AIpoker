@@ -9,6 +9,16 @@ import (
 // Bit Mask type for the "mode" word.
 type Bits uint16
 
+// player postion structure (betImages)
+type playStruct struct {
+	active bool
+	post   int
+	bet    int
+	screen *ebiten.Image
+}
+
+var playPost = [9]playStruct{}
+
 // Bit Mask Defitions for the "mode" word.
 // BIT MASK "MUST" MATCH VARIABLE DMAP!!!!
 const (
@@ -26,6 +36,8 @@ const (
 	aiProcess
 	foldMade
 	checkMade
+	callMade
+	raiseMade
 )
 
 // Define the font selector values.
@@ -445,4 +457,6 @@ var dmap = map[Bits]string{
 	aiProcess: "aiProcess",
 	foldMade:  "foldMade",
 	checkMade: "checkMade",
+	callMade:  "callMade",
+	raiseMade: "raiseMade",
 }

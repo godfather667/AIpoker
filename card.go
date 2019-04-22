@@ -80,7 +80,7 @@ func createTable(screen *ebiten.Image) {
 // dealCards place cards images on the displayed table.
 //   The actual cards dealt depend on the mode bits
 func dealCards(mode Bits, screen *ebiten.Image) {
-	displayAll(players)
+	// displayAll(players)
 	//	undisplayAll(players)
 
 	card := 0

@@ -207,6 +207,33 @@ func messageSquare(sx, sy int, px, py float64, colorCode color.NRGBA, screen *eb
 	screen.DrawImage(square, opts)
 }
 
+// Load bet Image Buffer
+func storeImage(post, bet int, screen *ebiten.Image) {
+	fmt.Println("storeImage", post, "  ", bet)
+	playPost[post].active = true
+	playPost[post].post = post
+	playPost[post].bet = bet
+	playPost[post].screen = screen
+	betImage(post, bet, screen)
+}
+
+// Clear a specific betimage
+func clearImage(post int) {
+	fmt.Println("Clear Image ", post)
+	playPost[post].active = false
+}
+
+func showImage() {
+	for _, v := range playPost {
+		if v.active {
+			fmt.Println("active")
+			betImage(v.post, v.bet, v.screen)
+		} else {
+			fmt.Println("inactive")
+		}
+	}
+}
+
 func betImage(post, bet int, screen *ebiten.Image) {
 	id := post * 4
 	msgBlank(betMap[id], betMap[id+1], screen)
