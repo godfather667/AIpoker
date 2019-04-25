@@ -21,6 +21,7 @@ func update(screen *ebiten.Image) error {
 	createTable(screen)
 
 	if has(mode, cardDeal) {
+		resetPlayersTable(players)
 		dealCards(mode, screen) // Deal Cards
 		modeDump(mode)
 	}

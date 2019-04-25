@@ -125,15 +125,46 @@ func dealCards(mode Bits, screen *ebiten.Image) {
 	return
 }
 
+func resetPlayersTable(players []int) {
+	for i := 0; i < 18; i++ {
+		j := i * 9
+		if i == 8 || i == 17 {
+			players[j+7] = unhide
+			players[j+8] = display
+		} else {
+			players[j+7] = hide
+			players[j+8] = display
+		}
+	}
+}
+
 // changeCard function that changes the hide/display parameters
 // of a particular card. Primarily to show a card front on screen.
 func changeCard(player, hide, display int, screen *ebiten.Image) {
-	postIndex := player * 6 // Compute position of player parameters
-	// Change players card positions
+	fmt.Println("Player = ", player)
+	comp := []int{}
+	for _, v := range players {
+		comp = append(comp, v)
+	}
+	postIndex := player * 9 // Compute position of player parameters
+	// Change Players Table to reflect current status
+	players[postIndex+7] = hide
+	players[postIndex+8] = display
+	// Display Chared player status
+	for i, v := range players {
+		j := i % 9
+		if comp[j] != v {
+			fmt.Print("row = ", j)
+			for k := j; k < j+9; k++ {
+				fmt.Print("  k = ", comp[j])
+			}
+		}
+		fmt.Println("")
+	}
 	imageDisplay(float64(players[postIndex]), float64(players[postIndex+1]),
-		players[postIndex+4], unhide, display, screen)
+		players[postIndex+4], players[postIndex+7], players[postIndex+8], screen)
 	imageDisplay(float64(players[postIndex+2]), float64(players[postIndex+3]),
-		players[postIndex+5], unhide, display, screen)
+		players[postIndex+5], players[postIndex+7], players[postIndex+8], screen)
 }
 
 // Mode Bit Functions - The "mode" value is used to control Deal Operationns,

@@ -28,8 +28,8 @@ func modeDump(mode Bits) {
 		if has(mode, betInput) {
 			fmt.Println("Mode = betInput")
 		}
-		if has(mode, betEnable) {
-			fmt.Println("Mode = betEnable")
+		if has(mode, betMade) {
+			fmt.Println("Mode = betMade")
 		}
 		if has(mode, betMade) {
 			fmt.Println("Mode = betMade")
@@ -48,6 +48,30 @@ func modeDump(mode Bits) {
 		}
 		if has(mode, checkMade) {
 			fmt.Println("Mode = checkMade")
+		}
+		if has(mode, callMade) {
+			fmt.Println("Mode = callMade")
+		}
+		if has(mode, raiseMade) {
+			fmt.Println("Mode = raiseMade")
+		}
+	}
+}
+
+func dumpPlayers(note string) {
+	for i := 0; i < 18; i++ {
+		j := i * 9
+		fmt.Println("--", note, "--")
+		fmt.Printf("Player %d: ", i)
+		if players[j+7] == hide {
+			fmt.Printf(" Hide ")
+		} else {
+			fmt.Printf("Unhide")
+		}
+		if players[j+8] == display {
+			fmt.Println(" Display")
+		} else {
+			fmt.Println("Undisplay")
 		}
 	}
 }

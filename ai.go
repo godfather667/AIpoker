@@ -65,7 +65,7 @@ func aiExec(users [9][2]int, betAmount, dealPost int, mode Bits, screen *ebiten.
 				mode = set(mode, foldMade)
 				changeCard(bi, hide, undisplay, screen)
 				fmt.Println("clear ", bi)
-				clearImage(bi)
+				//				clearImage(bi)
 			}
 		}
 

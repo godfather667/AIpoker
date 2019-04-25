@@ -99,7 +99,7 @@ func imageDisplay(x, y float64, cardValue, h, d int, screen *ebiten.Image) {
 	screen.DrawImage(card, opts)
 }
 
-// imageDisplay inserts individual images on the specified screen.
+// chipDisplay inserts individual images on the specified screen.
 func chipDisplay(x, y float64, chipName string, h, d int, screen *ebiten.Image) {
 	// Create Card image
 	if d == undisplay {
